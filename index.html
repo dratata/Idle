@@ -3,828 +3,884 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Eldritch Empire — Karanlığın Uyanışı</title>
+<title>Eldritch Empire</title>
 <style>
 :root {
-  --bg: #04040f;
-  --panel: #0b0b1e;
-  --panel2: #0e0e24;
-  --border: #1e1040;
-  --accent: #7c3aed;
-  --accent2: #10b981;
-  --gold: #f59e0b;
-  --text: #c4b5fd;
-  --dim: #6b5fa0;
-  --glow: rgba(124,58,237,0.35);
+  --bg:#030310; --panel:#08081e; --border:#1a0f40; --border2:#2d1b69;
+  --acc:#7c3aed; --acc2:#10b981; --gold:#f59e0b; --text:#c4b5fd; --dim:#5b4d80;
+  --glow:rgba(124,58,237,.4);
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-html, body { height:100%; overflow:hidden; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
-  display: grid;
-  grid-template-rows: 48px 1fr;
-  height: 100vh;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Palatino Linotype',Palatino,serif;
+  display:grid;grid-template-rows:50px 1fr 28px;height:100vh;}
 
-/* ── HEADER ── */
-#header {
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  flex-shrink: 0;
-}
-#game-title {
-  font-size: 1.15rem;
-  letter-spacing: 3px;
-  color: #a78bfa;
-  text-shadow: 0 0 18px var(--glow);
-  white-space: nowrap;
-}
-#header-stats {
-  display: flex;
-  gap: 22px;
-  font-size: 0.78rem;
-  color: var(--dim);
-}
-#header-stats b { color: var(--text); }
-#save-info { font-size:0.68rem; color: #3b3060; }
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
 
-/* ── MAIN GRID ── */
-#main {
-  display: grid;
-  grid-template-columns: 260px 1fr 290px;
-  overflow: hidden;
-  height: 100%;
-}
+/* HEADER */
+#hdr{position:relative;z-index:10;
+  background:linear-gradient(90deg,#030318 0%,#0c0830 50%,#030318 100%);
+  border-bottom:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;
+  box-shadow:0 2px 20px rgba(0,0,0,.6);}
+#gtitle{font-size:1.1rem;letter-spacing:4px;
+  background:linear-gradient(90deg,#9b6dff,#e0d4ff,#7c3aed);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:tglow 3s ease-in-out infinite alternate;white-space:nowrap;}
+@keyframes tglow{from{filter:drop-shadow(0 0 6px rgba(124,58,237,.5))}to{filter:drop-shadow(0 0 18px rgba(168,139,250,.9))}}
+#hstats{display:flex;gap:20px;font-size:.75rem;color:var(--dim);}
+#hstats b{color:var(--text);font-size:.82rem;}
+#hsave{font-size:.62rem;color:#2d1f50;}
 
-/* ── LEFT PANEL ── */
-#left {
-  background: var(--panel);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  padding: 18px 14px;
-  gap: 14px;
-  overflow-y: auto;
-}
+/* MAIN */
+#main{display:grid;grid-template-columns:252px 1fr 292px;overflow:hidden;position:relative;z-index:5;}
 
-#click-zone { display:flex; flex-direction:column; align-items:center; gap:12px; }
+/* LEFT */
+#left{background:rgba(6,6,26,.93);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:14px 12px;gap:11px;overflow-y:auto;backdrop-filter:blur(4px);}
 
-#void-btn {
-  width: 150px; height: 150px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 40%, #1a0a3a 0%, #050510 65%);
-  border: 2px solid #4c1d95;
-  cursor: pointer;
-  display: flex; align-items:center; justify-content:center;
-  font-size: 3.8rem;
-  transition: transform 0.08s, box-shadow 0.15s;
-  box-shadow: 0 0 28px var(--glow), 0 0 60px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.6);
-  position: relative;
-  user-select: none;
-  -webkit-user-select: none;
-}
-#void-btn::before {
-  content:'';
-  position:absolute; inset:-4px;
-  border-radius:50%;
-  border: 1px solid rgba(124,58,237,0.3);
-  animation: ring 3s linear infinite;
-}
-#void-btn::after {
-  content:'';
-  position:absolute; inset:-12px;
-  border-radius:50%;
-  border: 1px solid rgba(124,58,237,0.12);
-  animation: ring 4s linear infinite reverse;
-}
-@keyframes ring { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+#click-area{display:flex;flex-direction:column;align-items:center;gap:9px;}
 
-#void-btn:hover { box-shadow: 0 0 45px var(--glow), 0 0 80px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.6); }
-#void-btn:active { transform: scale(0.93); }
+#void-wrap{position:relative;width:158px;height:158px;display:flex;align-items:center;justify-content:center;}
+.ring{position:absolute;border-radius:50%;border:1px solid rgba(124,58,237,.2);}
+.r1{width:158px;height:158px;animation:spin 8s linear infinite;border-color:rgba(124,58,237,.3);}
+.r2{width:172px;height:172px;animation:spin 13s linear infinite reverse;border-color:rgba(124,58,237,.15);}
+.r3{width:186px;height:186px;animation:spin 22s linear infinite;border-color:rgba(124,58,237,.07);}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-#mana-val { font-size:1.7rem; color:#a78bfa; font-weight:bold; text-align:center; }
-#mana-rate { font-size:0.78rem; color:var(--dim); text-align:center; }
-#click-hint { font-size:0.68rem; color:#3b3060; text-align:center; }
+#void-btn{width:142px;height:142px;border-radius:50%;
+  background:radial-gradient(circle at 38% 35%,#1e0a42,#08041a 70%);
+  border:2px solid #4c1d95;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:3.5rem;
+  transition:transform .08s;
+  box-shadow:0 0 30px rgba(124,58,237,.45),0 0 70px rgba(124,58,237,.1),inset 0 0 30px rgba(0,0,0,.7);
+  position:relative;z-index:2;user-select:none;-webkit-user-select:none;overflow:hidden;}
+#void-btn:hover{box-shadow:0 0 50px rgba(124,58,237,.65),0 0 90px rgba(124,58,237,.2),inset 0 0 30px rgba(0,0,0,.7);}
+#void-btn:active{transform:scale(.91);}
+.ripple{position:absolute;border-radius:50%;background:rgba(168,139,250,.3);
+  animation:rip .55s ease-out forwards;pointer-events:none;}
+@keyframes rip{from{transform:scale(0);opacity:1}to{transform:scale(3);opacity:0}}
 
-.stat-box {
-  background: rgba(0,0,0,0.25);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 10px 12px;
-  font-size:0.8rem;
-}
-.stat-box h3 { color:var(--accent); font-size:0.68rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:7px; }
-.stat-row { display:flex; justify-content:space-between; padding:2px 0; }
-.stat-row span:last-child { color:#a78bfa; }
+#mana-big{font-size:1.55rem;color:#a78bfa;font-weight:bold;text-align:center;}
+#mana-rate{font-size:.75rem;color:var(--dim);text-align:center;}
 
-#prestige-box { margin-top:auto; }
-#prestige-hint { font-size:0.7rem; color:var(--dim); text-align:center; margin-bottom:6px; line-height:1.4; }
-#prestige-btn {
-  width:100%; padding:9px 6px;
-  background: linear-gradient(135deg,#120826,#2d1b69);
-  border: 1px solid #6d28d9;
-  border-radius:7px;
-  color:#a78bfa; cursor:pointer;
-  font-family:inherit; font-size:0.85rem;
-  transition: all 0.2s;
-  line-height:1.5;
-}
-#prestige-btn:hover:not(:disabled) { background:linear-gradient(135deg,#2d1b69,#4c1d95); box-shadow:0 0 14px rgba(109,40,217,0.45); }
-#prestige-btn:disabled { opacity:0.35; cursor:not-allowed; }
+.sbox{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:7px;padding:9px 11px;}
+.sbox h3{font-size:.63rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--acc);margin-bottom:6px;}
+.srow{display:flex;justify-content:space-between;padding:2.5px 0;font-size:.77rem;}
+.srow span:last-child{color:#a78bfa;}
 
-/* ── MID PANEL ── */
-#mid {
-  overflow-y: auto;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-#mid-title {
-  font-size:0.72rem; text-transform:uppercase; letter-spacing:2px;
-  color:var(--accent); padding-bottom:8px;
-  border-bottom:1px solid var(--border);
-}
+#ms-box{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:7px;padding:9px 11px;}
+#ms-box h3{font-size:.63rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;}
+.ms-row{font-size:.7rem;padding:2px 0;display:flex;justify-content:space-between;}
+.ms-done{color:var(--acc2);}
+.ms-pend{color:var(--dim);}
 
-.bcard {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
-  display: grid;
-  grid-template-columns: 44px 1fr auto;
-  gap:10px; align-items:center;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-  position: relative;
-  overflow: hidden;
-}
-.bcard::after {
-  content:''; position:absolute; bottom:0; left:0;
-  height:2px; width:0; background:var(--accent);
-  transition: width 0.3s;
-}
-.bcard.can::after { width:100%; }
-.bcard:hover:not(.no) { border-color:var(--accent); background:rgba(124,58,237,0.08); }
-.bcard.can { border-color:rgba(124,58,237,0.4); }
-.bcard.no { opacity:0.45; cursor:not-allowed; }
+#pbox{margin-top:auto;}
+#phint{font-size:.68rem;color:var(--dim);text-align:center;margin-bottom:5px;line-height:1.4;}
+#pbtn{width:100%;padding:9px 6px;
+  background:linear-gradient(135deg,#0e0526,#2d1b69);
+  border:1px solid #6d28d9;border-radius:7px;
+  color:#a78bfa;cursor:pointer;font-family:inherit;font-size:.84rem;
+  transition:all .2s;line-height:1.6;position:relative;overflow:hidden;}
+#pbtn:not(:disabled)::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(124,58,237,.18),transparent);
+  animation:shimmer 2s infinite;}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+#pbtn:hover:not(:disabled){background:linear-gradient(135deg,#2d1b69,#4c1d95);box-shadow:0 0 18px rgba(109,40,217,.5);}
+#pbtn:disabled{opacity:.3;cursor:not-allowed;}
 
-.bicon { font-size:1.9rem; text-align:center; }
-.bname { font-size:0.92rem; color:#d4bfff; }
-.bdesc { font-size:0.7rem; color:var(--dim); margin-top:2px; }
-.bprod { font-size:0.68rem; color:#6d28d9; margin-top:3px; }
-.bright { text-align:right; }
-.bcost { font-size:0.82rem; color:#a78bfa; }
-.bcnt { font-size:1.45rem; color:var(--accent2); font-weight:bold; }
+/* MID */
+#mid{overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;
+  background:rgba(3,3,16,.88);backdrop-filter:blur(2px);}
+#mid-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+#mid-hdr h2{font-size:.68rem;text-transform:uppercase;letter-spacing:2px;color:var(--acc);}
 
-/* ── RIGHT PANEL ── */
-#right {
-  background: var(--panel);
-  border-left: 1px solid var(--border);
-  display: flex; flex-direction:column;
-  overflow: hidden;
-}
-.tabs { display:flex; border-bottom:1px solid var(--border); }
-.tab {
-  flex:1; padding:10px 4px; text-align:center;
-  font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;
-  color:var(--dim); cursor:pointer; transition:all 0.15s;
-  border-bottom:2px solid transparent;
-}
-.tab:hover { color:var(--text); }
-.tab.on { color:var(--accent); border-bottom-color:var(--accent); background:rgba(124,58,237,0.07); }
+.bcard{background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:9px 11px;display:grid;grid-template-columns:42px 1fr auto;
+  gap:9px;align-items:center;cursor:pointer;transition:all .15s;
+  position:relative;overflow:hidden;}
+.bcard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--tc,var(--acc)),transparent);
+  transform:scaleX(0);transform-origin:left;transition:transform .4s;}
+.bcard.can::after{transform:scaleX(1);}
+.bcard[data-t="1"]{--tc:rgba(124,58,237,.6);}
+.bcard[data-t="2"]{--tc:rgba(59,130,246,.6);}
+.bcard[data-t="3"]{--tc:rgba(168,85,247,.6);}
+.bcard[data-t="4"]{--tc:rgba(236,72,153,.6);}
+.bcard[data-t="5"]{--tc:rgba(239,68,68,.6);}
+.bcard[data-t="6"]{--tc:rgba(245,158,11,.6);}
+.bcard.can{border-color:var(--tc,rgba(124,58,237,.4));}
+.bcard.can:hover{background:rgba(124,58,237,.08);border-color:var(--acc);}
+.bcard.no{opacity:.38;cursor:not-allowed;}
+.bicon{font-size:1.8rem;text-align:center;}
+.bname{font-size:.9rem;color:#d4bfff;font-weight:bold;}
+.bdesc{font-size:.66rem;color:var(--dim);margin-top:2px;}
+.bprod{font-size:.64rem;color:#6d28d9;margin-top:3px;}
+.bms{font-size:.6rem;color:var(--gold);margin-top:2px;}
+.bcost{font-size:.8rem;color:#a78bfa;white-space:nowrap;}
+.bcnt{font-size:1.4rem;color:var(--acc2);font-weight:bold;}
 
-#tab-body { overflow-y:auto; flex:1; padding:10px; }
+/* RIGHT */
+#right{background:rgba(6,6,26,.93);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;backdrop-filter:blur(4px);}
+.tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab{flex:1;padding:8px 2px;text-align:center;font-size:.63rem;
+  text-transform:uppercase;letter-spacing:.8px;color:var(--dim);cursor:pointer;
+  transition:all .15s;border-bottom:2px solid transparent;white-space:nowrap;min-width:48px;}
+.tab:hover{color:var(--text);}
+.tab.on{color:var(--acc);border-bottom-color:var(--acc);background:rgba(124,58,237,.07);}
+#tbody{overflow-y:auto;flex:1;padding:10px;}
 
-.section-label {
-  font-size:0.65rem; text-transform:uppercase; letter-spacing:1px;
-  color:#3b3060; margin:10px 0 5px;
-}
+.slbl{font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:#2d1f50;
+  margin:10px 0 4px;padding-bottom:3px;border-bottom:1px solid var(--border);}
 
-/* Upgrades */
-.ucard {
-  background:rgba(0,0,0,0.2);
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:8px 10px;
-  margin-bottom:5px;
-  cursor:pointer;
-  display:grid; grid-template-columns:28px 1fr;
-  gap:8px; align-items:center;
-  transition: all 0.15s;
-  font-size:0.78rem;
-}
-.ucard:hover:not(.ulocked):not(.ubought) { border-color:var(--accent); background:rgba(124,58,237,0.1); }
-.ucard.ulocked { opacity:0.25; cursor:not-allowed; }
-.ucard.ubought { opacity:0.45; border-color:var(--accent2); cursor:default; }
-.ucard.unafford { opacity:0.6; }
-.uicon { font-size:1.2rem; text-align:center; }
-.uname { color:#d4bfff; font-size:0.8rem; }
-.udesc { color:var(--dim); font-size:0.68rem; }
-.ucost { color:#a78bfa; font-size:0.7rem; margin-top:2px; }
+.ucard{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:6px;
+  padding:7px 9px;margin-bottom:4px;cursor:pointer;
+  display:grid;grid-template-columns:26px 1fr;gap:7px;align-items:start;transition:all .15s;}
+.ucard:hover:not(.ul):not(.ub){border-color:var(--acc);background:rgba(124,58,237,.08);}
+.ucard.ul{opacity:.2;cursor:not-allowed;}
+.ucard.ub{opacity:.4;border-color:var(--acc2);cursor:default;}
+.ucard.ua{opacity:.55;}
+.ui{font-size:1.1rem;text-align:center;padding-top:1px;}
+.un{font-size:.78rem;color:#d4bfff;}
+.ud{font-size:.65rem;color:var(--dim);margin-top:1px;}
+.uc{font-size:.67rem;color:#a78bfa;margin-top:2px;}
 
-/* Achievements */
-.acard {
-  background:rgba(0,0,0,0.2);
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:8px 10px;
-  margin-bottom:5px;
-  display:grid; grid-template-columns:26px 1fr;
-  gap:8px; align-items:center;
-  font-size:0.78rem;
-  transition:border-color 0.3s;
-}
-.acard.aon { border-color:var(--gold); }
-.acard.aoff { opacity:0.25; }
-.aicon { font-size:1.1rem; text-align:center; }
-.aname { color:#d4bfff; font-size:0.78rem; }
-.adesc { color:var(--dim); font-size:0.68rem; }
+.dccard{background:rgba(0,0,0,.25);border:1px solid rgba(245,158,11,.2);border-radius:7px;
+  padding:8px 10px;margin-bottom:5px;cursor:pointer;
+  display:grid;grid-template-columns:26px 1fr;gap:7px;align-items:start;transition:all .15s;}
+.dccard:hover:not(.dcb):not(.dcn){border-color:var(--gold);background:rgba(245,158,11,.06);}
+.dccard.dcb{opacity:.4;cursor:default;border-color:rgba(245,158,11,.4);}
+.dccard.dcn{opacity:.3;cursor:not-allowed;}
+.dn{font-size:.78rem;color:#fde68a;}
+.dd{font-size:.65rem;color:var(--dim);margin-top:1px;}
+.dc{font-size:.67rem;color:var(--gold);margin-top:2px;}
 
-/* Log */
-.log-e {
-  font-size:0.73rem; padding:4px 8px;
-  background:rgba(0,0,0,0.15);
-  border-left:2px solid var(--accent);
-  border-radius:0 4px 4px 0;
-  margin-bottom:3px;
-  animation:fadeIn 0.25s;
-}
-@keyframes fadeIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:none} }
+.acard{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:6px;
+  padding:7px 9px;margin-bottom:4px;display:grid;grid-template-columns:24px 1fr;gap:7px;transition:border-color .3s;}
+.acard.aon{border-color:rgba(245,158,11,.5);}
+.acard.aoff{opacity:.2;}
+.ai{font-size:1.05rem;text-align:center;}
+.an{font-size:.77rem;color:#d4bfff;}
+.ades{font-size:.64rem;color:var(--dim);}
 
-/* Float text */
-.ftext {
-  position:fixed; pointer-events:none;
-  font-size:1.1rem; font-weight:bold;
-  color:#a78bfa;
-  animation: fup 0.9s ease-out forwards;
-  z-index:9999;
-}
-@keyframes fup { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-70px)} }
+.stline{display:flex;justify-content:space-between;font-size:.75rem;padding:3px 0;
+  border-bottom:1px solid rgba(26,15,64,.4);}
+.stline span:last-child{color:#a78bfa;}
+.sth{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--acc);margin:10px 0 5px;}
 
-/* Notification */
-#notif {
-  position:fixed; top:55px; left:50%; transform:translateX(-50%);
-  background:linear-gradient(135deg,#12082a,#2d1b69);
-  border:1px solid var(--accent);
-  border-radius:8px; padding:10px 18px;
-  font-size:0.85rem; z-index:9000;
-  opacity:0; transition:opacity 0.3s;
-  pointer-events:none; text-align:center;
-  max-width:380px; line-height:1.4;
-}
-#notif.show { opacity:1; }
+.loge{font-size:.71rem;padding:4px 8px;background:rgba(0,0,0,.15);
+  border-left:2px solid var(--acc);border-radius:0 4px 4px 0;margin-bottom:3px;animation:fin .2s;}
+.loge.ev{border-left-color:var(--gold);}
+@keyframes fin{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
 
-/* Scrollbar */
-::-webkit-scrollbar { width:5px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
-::-webkit-scrollbar-thumb:hover { background:var(--accent); }
+/* TICKER */
+#ticker{position:relative;z-index:10;
+  background:linear-gradient(90deg,#030318,#08082e,#030318);
+  border-top:1px solid var(--border);overflow:hidden;display:flex;align-items:center;
+  font-size:.67rem;color:var(--dim);}
+#tlbl{padding:0 10px;color:#4c1d95;font-size:.58rem;text-transform:uppercase;
+  letter-spacing:1px;white-space:nowrap;border-right:1px solid var(--border);}
+#tscroll{flex:1;overflow:hidden;white-space:nowrap;}
+#tinner{display:inline-block;animation:scrolll 50s linear infinite;padding-left:100%;}
+@keyframes scrolll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+
+/* Float & Notif */
+.ftext{position:fixed;pointer-events:none;font-size:1rem;font-weight:bold;color:#a78bfa;
+  animation:fup .85s ease-out forwards;z-index:9999;white-space:nowrap;}
+@keyframes fup{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-65px)}}
+
+#notif{position:fixed;top:58px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#0d0526,#2d1b69);border:1px solid var(--acc);
+  border-radius:9px;padding:10px 18px;font-size:.84rem;z-index:9000;
+  opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;max-width:400px;line-height:1.5;
+  box-shadow:0 4px 30px rgba(0,0,0,.5),0 0 20px var(--glow);}
+#notif.show{opacity:1;}
+
+#evpop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:linear-gradient(135deg,#0d0526,#1e0a42);border:2px solid var(--gold);
+  border-radius:12px;padding:22px 28px;z-index:9500;text-align:center;min-width:280px;
+  box-shadow:0 0 40px rgba(245,158,11,.3),0 10px 40px rgba(0,0,0,.7);
+  animation:popin .3s cubic-bezier(.34,1.56,.64,1);display:none;}
+@keyframes popin{from{transform:translate(-50%,-50%) scale(.8);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+#evpop h3{color:var(--gold);font-size:1.1rem;margin-bottom:8px;}
+#evpop p{color:var(--text);margin-bottom:14px;font-size:.82rem;line-height:1.5;}
+#evpop button{padding:8px 20px;background:linear-gradient(135deg,#78350f,#b45309);
+  border:1px solid var(--gold);border-radius:6px;color:#fde68a;cursor:pointer;font-family:inherit;font-size:.84rem;}
+#evpop button:hover{background:linear-gradient(135deg,#b45309,#d97706);}
+
+#tip{position:fixed;z-index:8000;pointer-events:none;background:rgba(8,4,24,.97);
+  border:1px solid var(--border2);border-radius:7px;padding:8px 12px;
+  font-size:.74rem;max-width:220px;line-height:1.5;opacity:0;transition:opacity .15s;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);}
+#tip.show{opacity:1;}
+#tip strong{color:#a78bfa;display:block;margin-bottom:4px;}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--acc);}
 </style>
 </head>
 <body>
+<canvas id="bg"></canvas>
 
-<div id="header">
-  <div id="game-title">⚫ ELDRITCH EMPIRE</div>
-  <div id="header-stats">
-    <span>Toplam: <b id="h-total">0</b> 🌑</span>
-    <span>Üretim: <b id="h-prod">0</b>/sn</span>
-    <span>Yükseliş: <b id="h-asc">0</b> (<b id="h-mult">1.0</b>x)</span>
+<div id="hdr">
+  <div id="gtitle">⚫ ELDRITCH EMPIRE</div>
+  <div id="hstats">
+    <span>🌑 <b id="h-total">0</b></span>
+    <span>⚡ <b id="h-prod">0</b>/sn</span>
+    <span>💎 <b id="h-dc">0</b></span>
+    <span>🌀 <b id="h-asc">0</b>× (<b id="h-mult">1.0</b>×)</span>
   </div>
-  <div id="save-info">💾 Otomatik kayıt aktif</div>
+  <div id="hsave">💾 oto-kayıt</div>
 </div>
 
 <div id="main">
-
-  <!-- LEFT -->
   <div id="left">
-    <div id="click-zone">
-      <div id="void-btn">🌑</div>
-      <div id="mana-val">0 🌑</div>
+    <div id="click-area">
+      <div id="void-wrap">
+        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+        <div id="void-btn">🌑</div>
+      </div>
+      <div id="mana-big">0 🌑</div>
       <div id="mana-rate">+0/sn</div>
-      <div id="click-hint">Boşluğa fısılda...</div>
     </div>
 
-    <div class="stat-box">
+    <div class="sbox">
       <h3>📊 Durum</h3>
-      <div class="stat-row"><span>Tıklama Gücü</span><span id="s-click">1</span></div>
-      <div class="stat-row"><span>Kültistler</span><span id="s-cult">0</span></div>
-      <div class="stat-row"><span>Rüya Kristali</span><span id="s-dc">0</span></div>
-      <div class="stat-row"><span>Yükseltmeler</span><span id="s-upg">0</span></div>
+      <div class="srow"><span>Tıklama Gücü</span><span id="s-cp">1</span></div>
+      <div class="srow"><span>Üretim/sn</span><span id="s-pr">0</span></div>
+      <div class="srow"><span>Toplam Bina</span><span id="s-bl">0</span></div>
+      <div class="srow"><span>Yükseltmeler</span><span id="s-up">0</span></div>
+      <div class="srow"><span>Tıklamalar</span><span id="s-cl">0</span></div>
     </div>
 
-    <div id="prestige-box">
-      <div id="prestige-hint">1 Trilyon delilik toplayarak Yükseliş yapabilirsiniz</div>
-      <button id="prestige-btn" disabled>
-        🌀 YÜKSELİŞ YAP<br>
-        <small id="prestige-sub" style="font-size:0.72rem;color:#6d28d9;"></small>
+    <div id="ms-box">
+      <h3>🏅 Kilometre Taşları</h3>
+      <div id="mslist"></div>
+    </div>
+
+    <div id="pbox">
+      <div id="phint">1T delilik için Yükseliş</div>
+      <button id="pbtn" disabled>🌀 YÜKSELİŞ YAP<br>
+        <small id="psub" style="font-size:.7rem;color:#6d28d9;"></small>
       </button>
     </div>
   </div>
 
-  <!-- MID -->
   <div id="mid">
-    <div id="mid-title">🏛️ Yapılar — Tıklayarak satın al</div>
+    <div id="mid-hdr"><h2>🏛️ Yapılar</h2><small id="mid-info" style="font-size:.63rem;color:var(--dim);">tıkla → satın al</small></div>
     <div id="blist"></div>
   </div>
 
-  <!-- RIGHT -->
   <div id="right">
     <div class="tabs">
       <div class="tab on" data-tab="upgrades">Yükseltme</div>
-      <div class="tab" data-tab="achievements">Başarım</div>
+      <div class="tab" data-tab="shop">💎 Shop</div>
+      <div class="tab" data-tab="ach">Başarım</div>
+      <div class="tab" data-tab="stats">İstatistik</div>
       <div class="tab" data-tab="log">Günlük</div>
     </div>
-    <div id="tab-body">
+    <div id="tbody">
       <div id="t-upgrades"></div>
-      <div id="t-achievements" style="display:none"></div>
+      <div id="t-shop" style="display:none"></div>
+      <div id="t-ach" style="display:none"></div>
+      <div id="t-stats" style="display:none"></div>
       <div id="t-log" style="display:none"></div>
     </div>
   </div>
+</div>
 
+<div id="ticker">
+  <div id="tlbl">⚫ HABERLER</div>
+  <div id="tscroll"><div id="tinner"></div></div>
 </div>
 
 <div id="notif"></div>
+<div id="evpop"><h3 id="ev-t"></h3><p id="ev-d"></p><button onclick="closeEv()">Kabul Et</button></div>
+<div id="tip"></div>
 
 <script>
-// ═══════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════
-
-const BD = [
-  { id:'c',  name:'Kültist',          icon:'🧎', desc:'Karanlıkta dua eden adanmış bir takipçi', baseCost:15,           baseProd:0.1,    flavor:'Her dua bir fısıltı parçasıdır.' },
-  { id:'r',  name:'Ritüel Çemberi',   icon:'⭕', desc:'Güçle titreşen taşa kazınmış semboller',  baseCost:100,          baseProd:0.5,    flavor:'Kan akar, geçit açılır.' },
-  { id:'l',  name:'Yasak Kütüphane',  icon:'📚', desc:'Söylenemez bilgilerin tomları',            baseCost:1100,         baseProd:5,      flavor:'Her sayfa bir delilik fragmenti.' },
-  { id:'s',  name:'Karanlık Mabet',   icon:'🏛️', desc:'Kutsal olmayan bir ibadet yeri',           baseCost:12000,        baseProd:22,     flavor:'Tanrılar burada eğilir.' },
-  { id:'a',  name:'Akıl Hastanesi',   icon:'🏚️', desc:'Deliler gerçeğe en yakın olanlardır',     baseCost:130000,       baseProd:110,    flavor:'Çığlıklar ilahiye dönüşür.' },
-  { id:'m',  name:'Karanlık Manastır',icon:'⛪', desc:'Kutsal olmayan eylemler için kutsal yer', baseCost:1400000,      baseProd:450,    flavor:'Rahipler gerçeği fısıldar.' },
-  { id:'n',  name:'Boşluk Kavşağı',   icon:'🌀', desc:'Gerçeklikte bir yırtık',                   baseCost:20000000,     baseProd:2200,   flavor:'Boyutlar birbiriyle konuşur.' },
-  { id:'k',  name:'Batık Şehir',      icon:'🌊', desc:"Ph'nglui mglw'nafh...",                    baseCost:330000000,    baseProd:11000,  flavor:'Derin sular düşünür.' },
-  { id:'g',  name:'Yaşlı Dev',        icon:'🗿', desc:'Yürüyen bir tanrı',                        baseCost:5100000000,   baseProd:55000,  flavor:'Adımları yer sarsıntısı yaratır.' },
-  { id:'d',  name:'Boyut Ezici',      icon:'🕳️', desc:'Gerçekliğin kendisi eğilir',              baseCost:75000000000,  baseProd:220000, flavor:'Varoluş senin iradenle büküldü.' },
-];
-
-const UD = [
-  // Click
-  { id:'u_c1', name:'Derin Fısıltı',    icon:'👁️',  desc:'Tıklama x2',    cost:100,        type:'click',    mult:2,   show:(st)=>st.totalMana>=30 },
-  { id:'u_c2', name:'Kabus Sesi',       icon:'👁️‍🗨️', desc:'Tıklama x2',    cost:1000,       type:'click',    mult:2,   show:(st)=>st.totalMana>=400 },
-  { id:'u_c3', name:'Tanrısal Çığlık',  icon:'😱',  desc:'Tıklama x5',    cost:100000,     type:'click',    mult:5,   show:(st)=>st.totalMana>=40000 },
-  { id:'u_c4', name:'Gerçeklik Çatlağı',icon:'💥',  desc:'Tıklama x10',   cost:10000000,   type:'click',    mult:10,  show:(st)=>st.totalMana>=2000000 },
-  // Cultist
-  { id:'u_c_1',name:'Derin İnanç',      icon:'🧎',  desc:'Kültist x2',    cost:200,        type:'bld', tgt:'c', mult:2, show:(st)=>cnt('c')>=1 },
-  { id:'u_c_2',name:'Fanatizm',         icon:'🧎',  desc:'Kültist x3',    cost:5000,       type:'bld', tgt:'c', mult:3, show:(st)=>cnt('c')>=5 },
-  { id:'u_c_3',name:'Kutsal Çılgınlık', icon:'🧎',  desc:'Kültist x4',    cost:200000,     type:'bld', tgt:'c', mult:4, show:(st)=>cnt('c')>=25 },
-  // Ritual Circle
-  { id:'u_r_1',name:'Kan Yazısı',       icon:'⭕',  desc:'Çember x2',     cost:1000,       type:'bld', tgt:'r', mult:2, show:(st)=>cnt('r')>=1 },
-  { id:'u_r_2',name:'Şeytan Geometrisi',icon:'⭕',  desc:'Çember x3',     cost:25000,      type:'bld', tgt:'r', mult:3, show:(st)=>cnt('r')>=5 },
-  // Library
-  { id:'u_l_1',name:'Necronomicon',     icon:'📚',  desc:'Kütüphane x2',  cost:15000,      type:'bld', tgt:'l', mult:2, show:(st)=>cnt('l')>=1 },
-  { id:'u_l_2',name:'Sonsuz Arşiv',     icon:'📚',  desc:'Kütüphane x3',  cost:400000,     type:'bld', tgt:'l', mult:3, show:(st)=>cnt('l')>=10 },
-  // Shrine
-  { id:'u_s_1',name:'Kara Yıldız',      icon:'🏛️',  desc:'Mabet x2',      cost:150000,     type:'bld', tgt:'s', mult:2, show:(st)=>cnt('s')>=1 },
-  { id:'u_s_2',name:'Cehenneme Sütunu', icon:'🏛️',  desc:'Mabet x3',      cost:4000000,    type:'bld', tgt:'s', mult:3, show:(st)=>cnt('s')>=10 },
-  // Asylum
-  { id:'u_a_1',name:'Toplu Histeri',    icon:'🏚️',  desc:'Hastane x2',    cost:1500000,    type:'bld', tgt:'a', mult:2, show:(st)=>cnt('a')>=1 },
-  { id:'u_a_2',name:'Kolektif Delilik', icon:'🏚️',  desc:'Hastane x3',    cost:40000000,   type:'bld', tgt:'a', mult:3, show:(st)=>cnt('a')>=10 },
-  // Monastery
-  { id:'u_m_1',name:'Karanlık Litürji', icon:'⛪',  desc:'Manastır x2',   cost:15000000,   type:'bld', tgt:'m', mult:2, show:(st)=>cnt('m')>=1 },
-  // Global
-  { id:'u_g1', name:'Delilik Dalgası',  icon:'🌊',  desc:'Tüm üretim x1.5',cost:1000000,  type:'global',   mult:1.5, show:(st)=>st.totalMana>=400000 },
-  { id:'u_g2', name:'Karanlık Aydınlanma',icon:'🌑',desc:'Tüm üretim x2', cost:100000000, type:'global',   mult:2,   show:(st)=>st.totalMana>=30000000 },
-  { id:'u_g3', name:'Yaratıcı Kaos',    icon:'🕳️',  desc:'Tüm üretim x5', cost:10000000000,type:'global',  mult:5,   show:(st)=>st.totalMana>=2000000000 },
-];
-
-const ACD = [
-  { id:'a1',  name:'İlk Adım',          icon:'👣', desc:'1 delilik topla',            cond:(st)=>st.totalMana>=1 },
-  { id:'a2',  name:'Yüz Ruhlu',         icon:'💯', desc:'100 delilik topla',           cond:(st)=>st.totalMana>=100 },
-  { id:'a3',  name:'Bin Kabus',          icon:'😈', desc:'1,000 delilik topla',         cond:(st)=>st.totalMana>=1000 },
-  { id:'a4',  name:'Karanlık Yol',       icon:'🌑', desc:'10,000 delilik topla',        cond:(st)=>st.totalMana>=10000 },
-  { id:'a5',  name:'Uçurum Gözler',      icon:'👁️', desc:'100,000 delilik topla',       cond:(st)=>st.totalMana>=100000 },
-  { id:'a6',  name:'Milyon Çılgın',      icon:'🤯', desc:'1 milyon delilik topla',      cond:(st)=>st.totalMana>=1000000 },
-  { id:'a7',  name:'Milyar Ruh',         icon:'💫', desc:'1 milyar delilik topla',      cond:(st)=>st.totalMana>=1e9 },
-  { id:'a8',  name:'Tanrısal Delilik',   icon:'🌌', desc:'1 trilyon delilik topla',     cond:(st)=>st.totalMana>=1e12 },
-  { id:'a9',  name:'Küçük Tarikat',      icon:'🧎', desc:'10 Kültist satın al',         cond:(st)=>cnt('c')>=10 },
-  { id:'a10', name:'Büyük Tarikat',      icon:'🧎', desc:'50 Kültist satın al',         cond:(st)=>cnt('c')>=50 },
-  { id:'a11', name:'Okuyucu',            icon:'📚', desc:'10 Kütüphane satın al',       cond:(st)=>cnt('l')>=10 },
-  { id:'a12', name:'Kara İmparatorluk', icon:'👑', desc:'Her binayı en az 1 al',       cond:(st)=>BD.every(b=>cnt(b.id)>=1) },
-  { id:'a13', name:'Yükseliş I',         icon:'🌀', desc:'İlk Yükseli yap',             cond:(st)=>st.ascensions>=1 },
-  { id:'a14', name:'Sonsuz Döngü',       icon:'♾️', desc:'5 Yükseliş yap',             cond:(st)=>st.ascensions>=5 },
-  { id:'a15', name:'Tıklama Delisi',     icon:'👆', desc:'1000 kez tıkla',             cond:(st)=>st.clicks>=1000 },
-];
-
-// ═══════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════
-
-let G = {
-  mana: 0,
-  totalMana: 0,
-  ascensions: 0,
-  ascMult: 1,
-  dreamCrystals: 0,
-  clicks: 0,
-  b: {},   // building counts
-  u: {},   // bought upgrades
-  ach: {}, // unlocked achievements
-  lastSave: Date.now(),
-};
-
-BD.forEach(b => G.b[b.id] = 0);
-
-function cnt(id) { return G.b[id] || 0; }
-
-// ═══════════════════════════════════════════
-// CALCULATIONS
-// ═══════════════════════════════════════════
-
-function bldCost(b) {
-  return Math.floor(b.baseCost * Math.pow(1.15, G.b[b.id]));
+// ── CANVAS PARTICLES ──────────────────────────────────────
+const cvs = document.getElementById('bg'), cx = cvs.getContext('2d');
+let pts = [];
+function resizeCvs(){ cvs.width=innerWidth; cvs.height=innerHeight; }
+function initPts(){
+  resizeCvs(); pts=[];
+  for(let i=0;i<110;i++) pts.push({
+    x:Math.random()*cvs.width, y:Math.random()*cvs.height,
+    r:Math.random()*1.3+.2, vx:(Math.random()-.5)*.12, vy:-(Math.random()*.2+.05),
+    op:Math.random()*.45+.08, max:Math.random()*.45+.08, fd:1, tw:Math.random()<.35
+  });
 }
+function drawPts(){
+  cx.clearRect(0,0,cvs.width,cvs.height);
+  pts.forEach(p=>{
+    if(p.tw){ p.op+=p.fd*.003; if(p.op>=p.max)p.fd=-1; if(p.op<=.02)p.fd=1; }
+    cx.beginPath(); cx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(140,80,255,${p.op})`; cx.fill();
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.y<-5){p.y=cvs.height+5;p.x=Math.random()*cvs.width;}
+    if(p.x<0)p.x=cvs.width; if(p.x>cvs.width)p.x=0;
+  });
+  requestAnimationFrame(drawPts);
+}
+window.addEventListener('resize',resizeCvs);
+initPts(); drawPts();
 
-function bldProdBase(b) {
-  let p = b.baseProd;
-  UD.filter(u => u.type==='bld' && u.tgt===b.id && G.u[u.id]).forEach(u => p *= u.mult);
-  UD.filter(u => u.type==='global' && G.u[u.id]).forEach(u => p *= u.mult);
+// ── DATA ──────────────────────────────────────────────────
+const BD=[
+  {id:'c', n:'Kültist',          ic:'🧎',t:1,d:'Karanlıkta dua eden adanmış takipçi', base:15,          prod:.1,      fl:'Her dua bir fısıltı parçasıdır.'},
+  {id:'r', n:'Ritüel Çemberi',   ic:'⭕',t:1,d:'Güçle titreşen taşa kazınmış semboller',base:100,        prod:.5,      fl:'Kan akar, geçit açılır.'},
+  {id:'l', n:'Yasak Kütüphane',  ic:'📚',t:2,d:'Söylenemez bilgilerin tomları',       base:1100,         prod:5,       fl:'Her sayfa bir delilik fragmenti.'},
+  {id:'s', n:'Karanlık Mabet',   ic:'🏛️',t:2,d:'Kutsal olmayan ibadet yeri',          base:12000,        prod:22,      fl:'Tanrılar burada eğilir.'},
+  {id:'a', n:'Akıl Hastanesi',   ic:'🏚️',t:3,d:'Deliler gerçeğe en yakın olanlardır', base:130000,       prod:110,     fl:'Çığlıklar ilahiye dönüşür.'},
+  {id:'m', n:'Karanlık Manastır',ic:'⛪',t:3,d:'Kutsal olmayan eylemler için kutsal yer',base:1400000,    prod:450,     fl:'Rahipler gerçeği fısıldar.'},
+  {id:'n', n:'Boşluk Kavşağı',   ic:'🌀',t:4,d:'Gerçeklikte derin bir yırtık',        base:20000000,     prod:2200,    fl:'Boyutlar birbiriyle konuşur.'},
+  {id:'k', n:'Batık Şehir',      ic:'🌊',t:4,d:"Ph'nglui mglw'nafh...",               base:330000000,    prod:11000,   fl:'Derin sular düşünür.'},
+  {id:'g', n:'Yaşlı Dev',        ic:'🗿',t:5,d:'Yürüyen ve düşünen bir tanrı',         base:5100000000,   prod:55000,   fl:'Adımları dünyayı sarsar.'},
+  {id:'d', n:'Boyut Ezici',      ic:'🕳️',t:5,d:'Gerçekliğin kendisi önünde eğilir',   base:75000000000,  prod:220000,  fl:'Varoluş senin iradenle büküldü.'},
+  {id:'nf',n:'Kâbus Fabrikası',  ic:'🏭',t:6,d:'Kâbusları seri üretir ve ruhları ezer',base:1e12,        prod:1000000, fl:'Verimlilik. Kaos. Kâr.'},
+  {id:'rc',n:'Gerçeklik Çöküşü', ic:'💀',t:6,d:'Varoluşun temel kodunu yeniden yazar', base:15e12,       prod:6500000, fl:'Artık her şey senin kurduğun oyun.'},
+];
+
+const MS=[
+  {id:'ms1',lb:'İlk Fısıltı',   req:10,    type:'cm', v:.5,   ds:'+50% tıklama'},
+  {id:'ms2',lb:'Küçük Tarikat', req:1e3,   type:'pm', v:.1,   ds:'+10% üretim'},
+  {id:'ms3',lb:'Bilgi Açılır',  req:1e4,   type:'pm', v:.1,   ds:'+10% üretim'},
+  {id:'ms4',lb:'Karanlık Yol',  req:1e6,   type:'cm', v:1,    ds:'+100% tıklama'},
+  {id:'ms5',lb:'İmparatorluk',  req:1e8,   type:'pm', v:.25,  ds:'+25% üretim'},
+  {id:'ms6',lb:'Tanrı Uyanır',  req:1e11,  type:'pm', v:.5,   ds:'+50% üretim'},
+  {id:'ms7',lb:'Sonsuzluk',     req:1e14,  type:'pm', v:1,    ds:'+100% üretim'},
+];
+
+const UD=[
+  {id:'c1',n:'Derin Fısıltı',     ic:'👁️',  d:'Tıklama ×2',       c:100,       t:'click',mult:2,  sh:s=>s.T>=30},
+  {id:'c2',n:'Kabus Sesi',        ic:'👁️‍🗨️', d:'Tıklama ×2',       c:1000,      t:'click',mult:2,  sh:s=>s.T>=400},
+  {id:'c3',n:'Tanrısal Çığlık',   ic:'😱',  d:'Tıklama ×5',       c:100000,    t:'click',mult:5,  sh:s=>s.T>=40000},
+  {id:'c4',n:'Gerçeklik Çatlağı', ic:'💥',  d:'Tıklama ×10',      c:1e7,       t:'click',mult:10, sh:s=>s.T>=2e6},
+  {id:'c5',n:'Evrensel Delilik',  ic:'🌌',  d:'Tıklama ×20',      c:1e9,       t:'click',mult:20, sh:s=>s.T>=2e8},
+  {id:'cc1',n:'Derin İnanç',      ic:'🧎',  d:'Kültist ×2',       c:200,       t:'b',tgt:'c',mult:2, sh:s=>cnt('c')>=1},
+  {id:'cc2',n:'Fanatizm',         ic:'🧎',  d:'Kültist ×3',       c:5000,      t:'b',tgt:'c',mult:3, sh:s=>cnt('c')>=5},
+  {id:'cc3',n:'Kutsal Çılgınlık', ic:'🧎',  d:'Kültist ×4',       c:200000,    t:'b',tgt:'c',mult:4, sh:s=>cnt('c')>=25},
+  {id:'cc4',n:'Ebedi Kult',       ic:'🧎',  d:'Kültist ×5',       c:5e7,       t:'b',tgt:'c',mult:5, sh:s=>cnt('c')>=50},
+  {id:'rr1',n:'Kan Yazısı',       ic:'⭕',  d:'Çember ×2',        c:1000,      t:'b',tgt:'r',mult:2, sh:s=>cnt('r')>=1},
+  {id:'rr2',n:'Şeytan Geometrisi',ic:'⭕',  d:'Çember ×3',        c:25000,     t:'b',tgt:'r',mult:3, sh:s=>cnt('r')>=5},
+  {id:'rr3',n:'Kara Matematik',   ic:'⭕',  d:'Çember ×4',        c:2e6,       t:'b',tgt:'r',mult:4, sh:s=>cnt('r')>=25},
+  {id:'ll1',n:'Necronomicon',     ic:'📚',  d:'Kütüphane ×2',     c:15000,     t:'b',tgt:'l',mult:2, sh:s=>cnt('l')>=1},
+  {id:'ll2',n:'Sonsuz Arşiv',     ic:'📚',  d:'Kütüphane ×3',     c:400000,    t:'b',tgt:'l',mult:3, sh:s=>cnt('l')>=10},
+  {id:'ll3',n:'Ölü Bilge Ruhu',   ic:'📚',  d:'Kütüphane ×4',     c:2e7,       t:'b',tgt:'l',mult:4, sh:s=>cnt('l')>=25},
+  {id:'ss1',n:'Kara Yıldız',      ic:'🏛️',  d:'Mabet ×2',         c:150000,    t:'b',tgt:'s',mult:2, sh:s=>cnt('s')>=1},
+  {id:'ss2',n:'Cehenneme Sütunu', ic:'🏛️',  d:'Mabet ×3',         c:4e6,       t:'b',tgt:'s',mult:3, sh:s=>cnt('s')>=10},
+  {id:'ss3',n:'Tanrı Tahtı',      ic:'🏛️',  d:'Mabet ×4',         c:3e8,       t:'b',tgt:'s',mult:4, sh:s=>cnt('s')>=25},
+  {id:'aa1',n:'Toplu Histeri',    ic:'🏚️',  d:'Hastane ×2',       c:1.5e6,     t:'b',tgt:'a',mult:2, sh:s=>cnt('a')>=1},
+  {id:'aa2',n:'Kolektif Delilik', ic:'🏚️',  d:'Hastane ×3',       c:4e7,       t:'b',tgt:'a',mult:3, sh:s=>cnt('a')>=10},
+  {id:'mm1',n:'Karanlık Litürji', ic:'⛪',  d:'Manastır ×2',      c:1.5e7,     t:'b',tgt:'m',mult:2, sh:s=>cnt('m')>=1},
+  {id:'mm2',n:'Kara Cemaat',      ic:'⛪',  d:'Manastır ×3',      c:5e8,       t:'b',tgt:'m',mult:3, sh:s=>cnt('m')>=10},
+  {id:'nn1',n:'Boyutlar Arası',   ic:'🌀',  d:'Kavşak ×2',        c:2e8,       t:'b',tgt:'n',mult:2, sh:s=>cnt('n')>=1},
+  {id:'nn2',n:'Sonsuz Vorteks',   ic:'🌀',  d:'Kavşak ×3',        c:8e9,       t:'b',tgt:'n',mult:3, sh:s=>cnt('n')>=10},
+  {id:'kk1',n:'Batık Uyanış',     ic:'🌊',  d:'Şehir ×2',         c:3.5e9,     t:'b',tgt:'k',mult:2, sh:s=>cnt('k')>=1},
+  {id:'g1', n:'Delilik Dalgası',  ic:'🌊',  d:'Tüm üretim ×1.5',  c:1e6,       t:'global',mult:1.5, sh:s=>s.T>=4e5},
+  {id:'g2', n:'Karanlık Aydın.',  ic:'🌑',  d:'Tüm üretim ×2',    c:1e8,       t:'global',mult:2,   sh:s=>s.T>=3e7},
+  {id:'g3', n:'Yaratıcı Kaos',    ic:'🕳️',  d:'Tüm üretim ×5',    c:1e10,      t:'global',mult:5,   sh:s=>s.T>=2e9},
+  {id:'g4', n:'Evrensel Çözülüş', ic:'💀',  d:'Tüm üretim ×10',   c:1e13,      t:'global',mult:10,  sh:s=>s.T>=2e12},
+];
+
+const DCS=[
+  {id:'d1',n:'Karanlık Miras',   ic:'💎',d:'Başlangıçta +1000 delilik',        c:1, t:'sm',v:1000},
+  {id:'d2',n:'Kalıcı Niyet',     ic:'⚡',d:'Tıklama +100% kalıcı',             c:2, t:'cp',v:1},
+  {id:'d3',n:'Tarikat Mirası',   ic:'🧎',d:'Kültist +100% kalıcı',             c:2, t:'bp',tgt:'c',v:1},
+  {id:'d4',n:'Ebedi Bilgelik',   ic:'📚',d:'Tüm üretim +25% kalıcı',           c:3, t:'pp',v:.25},
+  {id:'d5',n:'Boşluk Kanı',      ic:'🌀',d:'Yükseliş çarpanı +0.25 bonus/asc', c:5, t:'ab',v:.25},
+  {id:'d6',n:'Evrensel Delilik', ic:'🌑',d:'Tüm üretim +100% kalıcı',          c:10,t:'pp',v:1},
+  {id:'d7',n:'Tanrısal Tık',     ic:'💥',d:'Tıklama +500% kalıcı',             c:15,t:'cp',v:5},
+  {id:'d8',n:'Sonsuzluk Şifası', ic:'♾️',d:'Tüm üretim +300% kalıcı',          c:25,t:'pp',v:3},
+];
+
+const ACD=[
+  {id:'a1', ic:'👣',n:'İlk Adım',        d:'1 delilik topla',         fn:s=>s.T>=1},
+  {id:'a2', ic:'💯',n:'Yüz Ruhlu',       d:'100 delilik',             fn:s=>s.T>=100},
+  {id:'a3', ic:'😈',n:'Bin Kabus',        d:'1,000 delilik',           fn:s=>s.T>=1000},
+  {id:'a4', ic:'🌑',n:'Karanlık Yol',     d:'10,000 delilik',          fn:s=>s.T>=1e4},
+  {id:'a5', ic:'👁️',n:'Uçurum Gözler',   d:'100,000 delilik',         fn:s=>s.T>=1e5},
+  {id:'a6', ic:'🤯',n:'Milyon Çılgın',    d:'1 milyon delilik',        fn:s=>s.T>=1e6},
+  {id:'a7', ic:'💫',n:'Milyar Ruh',       d:'1 milyar delilik',        fn:s=>s.T>=1e9},
+  {id:'a8', ic:'🌌',n:'Tanrısal Delilik', d:'1 trilyon delilik',       fn:s=>s.T>=1e12},
+  {id:'a9', ic:'🚀',n:'Astral Aşım',      d:'1 katrilyon delilik',     fn:s=>s.T>=1e15},
+  {id:'a10',ic:'🧎',n:'Küçük Tarikat',    d:'10 Kültist',              fn:s=>cnt('c')>=10},
+  {id:'a11',ic:'🧎',n:'Büyük Tarikat',    d:'50 Kültist',              fn:s=>cnt('c')>=50},
+  {id:'a12',ic:'⭐',n:'Mükemmel Kültist', d:'100 Kültist',             fn:s=>cnt('c')>=100},
+  {id:'a13',ic:'📚',n:'Okuyucu',          d:'10 Kütüphane',            fn:s=>cnt('l')>=10},
+  {id:'a14',ic:'👑',n:'Kara İmparatorluk',d:'Her binadan en az 1',     fn:s=>BD.every(b=>cnt(b.id)>=1)},
+  {id:'a15',ic:'🌀',n:'Yükseliş I',       d:'İlk Yükseliş',            fn:s=>s.asc>=1},
+  {id:'a16',ic:'♾️',n:'Sonsuz Döngü',     d:'5 Yükseliş',              fn:s=>s.asc>=5},
+  {id:'a17',ic:'👆',n:'Tıklama Delisi',   d:'1000 tıklama',            fn:s=>s.tc>=1000},
+  {id:'a18',ic:'💰',n:'Zengin Boşluk',    d:'1M/sn üret',              fn:s=>totalProd()>=1e6},
+  {id:'a19',ic:'💎',n:'Rüya Taciri',      d:'5 DC kristali kazan',     fn:s=>s.tdcTotal>=5},
+  {id:'a20',ic:'🏭',n:'Fabrikatör',       d:'Kâbus Fabrikası al',      fn:s=>cnt('nf')>=1},
+];
+
+const EVTS=[
+  {t:'⚡ Delilik Dalgası!', d:'Boşluktan güçlü enerji! 30sn boyunca üretim ×5.', tp:'pb',v:5,dur:30},
+  {t:'🌑 Kutsal An!',      d:'Geçmiş zamanların fısıltısı sana 2 dakikalık üretim hediye ediyor!', tp:'gift'},
+  {t:'🧎 Kültist Ayaklanması!',d:'Gizli bir topluluk davanı duydu! +10 bedava Kültist!', tp:'fb',v:{id:'c',n:10}},
+  {t:'📚 Yasak Bilgi!',    d:'Eski bir tomar sana ulaştı. 30sn tıklama ×3!', tp:'cb',v:3,dur:30},
+  {t:'🌀 Boyutsal Çatlak!',d:'Tüm yapılar 60sn boyunca ×2 üretir!', tp:'pb',v:2,dur:60},
+];
+
+const TMSGS=[
+  '⚫ Boşluk sizi izliyor... ⚫  ·  ',
+  'Fısıltılar: "Henüz başlamadı bile..."  ·  ',
+  'Kültistler karanlıkta toplanıyor.  ·  ',
+  "Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn.  ·  ",
+  'Delilik bir hastalık değil, bir aydınlanmadır.  ·  ',
+  'Gerçeklik sadece bir görüştür.  ·  ',
+  'Her tıklama varoluşu biraz daha aşındırır.  ·  ',
+  'Ritüel başlamak üzere. Hazır mısınız?  ·  ',
+  'Boşluktan boşluğa bakan biri size bakıyor.  ·  ',
+  'Yıldızların yerleri doğru. Zaman yaklaşıyor.  ·  ',
+  'Tanrılar uykuda, ama rüyaları gerçek.  ·  ',
+  'Güç. Daha fazla güç. Her zaman daha fazla.  ·  ',
+];
+
+// ── STATE ─────────────────────────────────────────────────
+let G={
+  m:0, T:0, asc:0, ascM:1, ascBns:0,
+  dc:0, tdcTotal:0, tc:0,
+  b:{}, u:{}, ms:{}, dcs:{}, ach:{},
+  dcp:0, dcprod:0,   // dc click/prod bonus
+  ev:null, evExp:0,
+  lastSave:Date.now(),
+};
+BD.forEach(b=>G.b[b.id]=0);
+
+// ── HELPERS ───────────────────────────────────────────────
+function cnt(id){return G.b[id]||0;}
+function bCost(b){return Math.floor(b.base*Math.pow(1.15,G.b[b.id]));}
+
+function bProd(b){
+  let p=b.prod;
+  UD.filter(u=>u.t==='b'&&u.tgt===b.id&&G.u[u.id]).forEach(u=>p*=u.mult);
+  UD.filter(u=>u.t==='global'&&G.u[u.id]).forEach(u=>p*=u.mult);
+  p*=(1+G.dcprod);
   return p;
 }
 
-function totalProd() {
-  let t = 0;
-  BD.forEach(b => t += bldProdBase(b) * G.b[b.id]);
-  return t * G.ascMult;
+function totalProd(){
+  let t=0;
+  BD.forEach(b=>t+=bProd(b)*G.b[b.id]);
+  let mm=1;
+  MS.filter(x=>G.ms[x.id]&&x.type==='pm').forEach(x=>mm+=x.v);
+  t*=mm*G.ascM;
+  if(G.ev&&G.ev.tp==='pb'&&Date.now()<G.evExp) t*=G.ev.v;
+  return t;
 }
 
-function clickPow() {
-  let p = 1;
-  UD.filter(u => u.type==='click' && G.u[u.id]).forEach(u => p *= u.mult);
-  return p * G.ascMult;
+function clickPow(){
+  let p=1;
+  UD.filter(u=>u.t==='click'&&G.u[u.id]).forEach(u=>p*=u.mult);
+  let mm=1;
+  MS.filter(x=>G.ms[x.id]&&x.type==='cm').forEach(x=>mm+=x.v);
+  p*=mm*(1+G.dcp)*G.ascM;
+  if(G.ev&&G.ev.tp==='cb'&&Date.now()<G.evExp) p*=G.ev.v;
+  return p;
 }
 
-function upgCount() {
-  return Object.values(G.u).filter(Boolean).length;
+function totalBlds(){return BD.reduce((s,b)=>s+G.b[b.id],0);}
+function upgCount(){return Object.values(G.u).filter(Boolean).length;}
+
+function fmt(n){
+  if(n<1e3)  return Math.floor(n)+'';
+  if(n<1e6)  return (n/1e3).toFixed(2)+'k';
+  if(n<1e9)  return (n/1e6).toFixed(2)+'M';
+  if(n<1e12) return (n/1e9).toFixed(2)+'B';
+  if(n<1e15) return (n/1e12).toFixed(2)+'T';
+  if(n<1e18) return (n/1e15).toFixed(2)+'Qa';
+  if(n<1e21) return (n/1e18).toFixed(2)+'Qi';
+  return (n/1e21).toFixed(2)+'Sx';
+}
+function fmtT(s){
+  if(s<60) return s.toFixed(0)+'sn';
+  if(s<3600) return Math.floor(s/60)+'dk';
+  return Math.floor(s/3600)+'sa '+Math.floor((s%3600)/60)+'dk';
 }
 
-// ═══════════════════════════════════════════
-// NUMBER FORMAT
-// ═══════════════════════════════════════════
-
-function fmt(n) {
-  if (n < 1e3)  return Math.floor(n).toString();
-  if (n < 1e6)  return (n/1e3).toFixed(2)  + 'k';
-  if (n < 1e9)  return (n/1e6).toFixed(2)  + 'M';
-  if (n < 1e12) return (n/1e9).toFixed(2)  + 'B';
-  if (n < 1e15) return (n/1e12).toFixed(2) + 'T';
-  if (n < 1e18) return (n/1e15).toFixed(2) + 'Qa';
-  return            (n/1e18).toFixed(2) + 'Qi';
+// ── ACTIONS ───────────────────────────────────────────────
+function doClick(e){
+  const p=clickPow();
+  G.m+=p; G.T+=p; G.tc++;
+  floatTxt('+'+fmt(p),e.clientX,e.clientY);
+  const btn=document.getElementById('void-btn');
+  const rip=document.createElement('div');
+  rip.className='ripple';
+  const r=btn.getBoundingClientRect(), sz=Math.max(r.width,r.height);
+  rip.style.cssText=`width:${sz}px;height:${sz}px;left:${e.clientX-r.left-sz/2}px;top:${e.clientY-r.top-sz/2}px;`;
+  btn.appendChild(rip);
+  setTimeout(()=>rip.remove(),560);
+  checkMS(); checkAch(); refreshFast();
 }
 
-// ═══════════════════════════════════════════
-// ACTIONS
-// ═══════════════════════════════════════════
-
-function doClick(e) {
-  const p = clickPow();
-  G.mana += p;
-  G.totalMana += p;
-  G.clicks++;
-  floatText(`+${fmt(p)}`, e.clientX, e.clientY);
-  checkAch();
-  refreshHeader();
-  refreshLeft();
-  refreshBuildingAfford();
+function buyBld(id){
+  const b=BD.find(x=>x.id===id), cost=bCost(b);
+  if(G.m<cost)return;
+  G.m-=cost; G.b[id]++;
+  log(`🏛️ ${b.n} satın alındı! (${G.b[id]}. adet)`);
+  checkMS(); checkAch(); refreshFast(); renderBlds(); renderUpg();
 }
 
-function buyBld(id) {
-  const b = BD.find(x=>x.id===id);
-  const cost = bldCost(b);
-  if (G.mana < cost) return;
-  G.mana -= cost;
-  G.b[id]++;
-  log(`🏛️ ${b.name} satın alındı! (${G.b[id]}. adet)`);
-  checkAch();
-  refreshHeader();
-  refreshLeft();
-  renderBuildings();
-  renderUpgrades();
+function buyUpg(id){
+  const u=UD.find(x=>x.id===id);
+  if(!u||G.u[id]||G.m<u.c)return;
+  G.m-=u.c; G.u[id]=true;
+  log(`✨ Yükseltme: ${u.n}`);
+  checkAch(); refreshFast(); renderUpg(); renderBlds();
 }
 
-function buyUpg(id) {
-  const u = UD.find(x=>x.id===id);
-  if (!u || G.u[id] || G.mana < u.cost) return;
-  G.mana -= u.cost;
-  G.u[id] = true;
-  log(`✨ Yükseltme açıldı: ${u.name}`);
-  checkAch();
-  refreshHeader();
-  refreshLeft();
-  renderUpgrades();
-  renderBuildings();
+function buyDCS(id){
+  const item=DCS.find(x=>x.id===id);
+  if(!item||G.dcs[id]||G.dc<item.c)return;
+  G.dc-=item.c; G.dcs[id]=true;
+  applyDC(item);
+  log(`💎 DC: ${item.n}`);
+  notif(`💎 ${item.n} aktif! ${item.d}`);
+  checkAch(); refreshFast(); renderDCS();
 }
 
-function doPrestige() {
-  if (G.totalMana < 1e12) return;
-  const bonus = Math.max(1, Math.floor(Math.log10(G.totalMana / 1e12) + 1));
-  G.ascensions++;
-  G.ascMult = 1 + G.ascensions * 0.5;
-  G.dreamCrystals += bonus;
-  G.mana = 0; G.totalMana = 0;
-  BD.forEach(b => G.b[b.id] = 0);
-  G.u = {};
-  showNotif(`🌀 ${G.ascensions}. Yükseliş! +${bonus} Rüya Kristali • Çarpan: x${G.ascMult.toFixed(1)}`);
-  log(`🌀 Yükseliş yapıldı! Çarpan artık x${G.ascMult.toFixed(1)}`);
-  checkAch();
-  refreshAll();
+function applyDC(item){
+  if(item.t==='cp') G.dcp+=item.v;
+  if(item.t==='pp') G.dcprod+=item.v;
+  if(item.t==='ab') G.ascBns+=item.v;
 }
 
-// ═══════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════
-
-function refreshHeader() {
-  const prod = totalProd();
-  setText('h-total', fmt(G.totalMana));
-  setText('h-prod',  fmt(prod));
-  setText('h-asc',   G.ascensions);
-  setText('h-mult',  G.ascMult.toFixed(1));
+function recalcDC(){
+  G.dcp=0; G.dcprod=0; G.ascBns=0;
+  DCS.forEach(x=>{ if(G.dcs[x.id]) applyDC(x); });
+  G.ascM=1+G.asc*0.5+G.ascBns*G.asc;
 }
 
-function refreshLeft() {
-  const prod = totalProd();
-  setText('mana-val',  fmt(G.mana) + ' 🌑');
-  setText('mana-rate', `+${fmt(prod)}/sn`);
-  setText('s-click',   fmt(clickPow()));
-  setText('s-cult',    cnt('c'));
-  setText('s-dc',      G.dreamCrystals);
-  setText('s-upg',     upgCount());
+function doPrestige(){
+  if(G.T<1e12)return;
+  const bonus=Math.max(1,Math.floor(Math.log10(G.T/1e12)+1));
+  G.asc++; G.dc+=bonus; G.tdcTotal+=bonus;
+  G.ascM=1+G.asc*0.5+G.ascBns*G.asc;
+  const startM=G.dcs['d1']?1000:0;
+  G.m=startM; G.T=startM;
+  BD.forEach(b=>G.b[b.id]=0); G.u={}; G.ev=null; G.evExp=0;
+  notif(`🌀 ${G.asc}. Yükseliş! +${bonus} 💎 · Çarpan: ×${G.ascM.toFixed(2)}`);
+  log(`🌀 Yükseliş #${G.asc} tamamlandı! Çarpan: ×${G.ascM.toFixed(2)}`);
+  checkAch(); renderAll();
+}
 
-  // Prestige
-  const can = G.totalMana >= 1e12;
-  document.getElementById('prestige-btn').disabled = !can;
-  if (can) {
-    const b = Math.max(1, Math.floor(Math.log10(G.totalMana / 1e12) + 1));
-    setText('prestige-hint', '✅ Yükseliş yapabilirsiniz!');
-    setText('prestige-sub',  `+${b} Rüya Kristali kazanırsınız`);
+// ── MILESTONES ────────────────────────────────────────────
+function checkMS(){
+  MS.forEach(m=>{
+    if(!G.ms[m.id]&&G.T>=m.req){
+      G.ms[m.id]=true;
+      notif(`🏅 Kilometre Taşı: ${m.lb} — ${m.ds}`);
+      log(`🏅 Kilometre Taşı: ${m.lb}`);
+    }
+  });
+  renderMS();
+}
+
+function renderMS(){
+  const el=document.getElementById('mslist');
+  const done=MS.filter(m=>G.ms[m.id]).length;
+  const next=MS.find(m=>!G.ms[m.id]);
+  let html=`<div class="ms-row ms-done">${done}/${MS.length} tamamlandı</div>`;
+  if(next){
+    const pct=Math.min(100,(G.T/next.req)*100).toFixed(1);
+    html+=`<div class="ms-row ms-pend">Sonraki: <b>${next.lb}</b> — ${next.ds}</div>`;
+    html+=`<div style="background:rgba(0,0,0,.3);border-radius:4px;height:3px;margin-top:5px;overflow:hidden">
+      <div style="height:3px;width:${pct}%;background:linear-gradient(90deg,#7c3aed,#a78bfa);transition:width 1s"></div></div>`;
+  }
+  el.innerHTML=html;
+}
+
+// ── EVENTS ────────────────────────────────────────────────
+let nextEvTime=Date.now()+120000;
+
+function checkEv(){
+  if(G.ev&&Date.now()<G.evExp) return;
+  if(Date.now()<nextEvTime||totalProd()<1) return;
+  if(Math.random()>.003) return;
+  const ev=EVTS[Math.floor(Math.random()*EVTS.length)];
+  G.ev=ev;
+  let desc=ev.d;
+  if(ev.tp==='gift'){
+    const gift=Math.max(100,totalProd()*120);
+    G.m+=gift; G.T+=gift;
+    desc+=` (+${fmt(gift)} delilik!)`;
+    G.ev=null;
+  } else if(ev.tp==='fb'){
+    G.b[ev.v.id]=(G.b[ev.v.id]||0)+ev.v.n;
+    G.ev=null; renderBlds();
   } else {
-    setText('prestige-hint', `1T delilik gerekli (${fmt(G.totalMana)} / ${fmt(1e12)})`);
-    setText('prestige-sub',  '');
+    G.evExp=Date.now()+ev.dur*1000;
   }
+  document.getElementById('ev-t').textContent=ev.t;
+  document.getElementById('ev-d').textContent=desc;
+  document.getElementById('evpop').style.display='block';
+  log(`⚡ Olay: ${ev.t}`,true);
+  nextEvTime=Date.now()+(3+Math.random()*7)*60000;
+}
+function closeEv(){document.getElementById('evpop').style.display='none';}
+
+// ── ACHIEVEMENTS ──────────────────────────────────────────
+function checkAch(){
+  let ch=false;
+  ACD.forEach(a=>{
+    if(!G.ach[a.id]&&a.fn(G)){
+      G.ach[a.id]=true;
+      notif(`🏆 ${a.ic} ${a.n} — ${a.d}`);
+      log(`🏆 Başarım: ${a.n}`);
+      ch=true;
+    }
+  });
+  if(ch&&document.querySelector('.tab.on')?.dataset?.tab==='ach') renderAch();
 }
 
-function refreshBuildingAfford() {
-  BD.forEach(b => {
-    const el = document.getElementById('bc-'+b.id);
-    if (!el) return;
-    const cost = bldCost(b);
-    el.classList.toggle('can', G.mana >= cost);
-    el.classList.toggle('no',  G.mana < cost);
-    const costEl = el.querySelector('.bcost');
-    if (costEl) costEl.textContent = fmt(cost) + ' 🌑';
-    const cntEl = el.querySelector('.bcnt');
-    if (cntEl) cntEl.textContent = G.b[b.id];
+// ── RENDER ────────────────────────────────────────────────
+function setText(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+
+function refreshFast(){
+  const prod=totalProd(), cp=clickPow();
+  setText('h-total',fmt(G.T)); setText('h-prod',fmt(prod));
+  setText('h-dc',G.dc);       setText('h-asc',G.asc);
+  setText('h-mult',G.ascM.toFixed(2));
+  setText('mana-big',fmt(G.m)+' 🌑');
+  setText('mana-rate',`+${fmt(prod)}/sn · tık: ${fmt(cp)}`);
+  setText('s-cp',fmt(cp)); setText('s-pr',fmt(prod));
+  setText('s-bl',totalBlds()); setText('s-up',upgCount()); setText('s-cl',fmt(G.tc));
+
+  const can=G.T>=1e12;
+  document.getElementById('pbtn').disabled=!can;
+  if(can){
+    const b=Math.max(1,Math.floor(Math.log10(G.T/1e12)+1));
+    setText('phint','✅ Yükseliş yapabilirsiniz!');
+    setText('psub',`+${b} 💎 Rüya Kristali`);
+  } else {
+    const pct=Math.min(100,(G.T/1e12)*100).toFixed(3);
+    setText('phint',`${pct}% tamamlandı`);
+    setText('psub','');
+  }
+
+  // event timer
+  if(G.ev&&G.ev.tp!=='gift'&&G.ev.tp!=='fb'){
+    const rem=Math.max(0,(G.evExp-Date.now())/1000);
+    if(rem>0) setText('hsave',`⚡ ${G.ev.t.split('!')[0]} ${rem.toFixed(0)}sn`);
+    else { setText('hsave','💾 oto-kayıt'); G.ev=null; }
+  }
+
+  // building inline update
+  BD.forEach(b=>{
+    const cost=bCost(b), canA=G.m>=cost;
+    const c=document.getElementById('bc-'+b.id); if(!c)return;
+    c.classList.toggle('can',canA); c.classList.toggle('no',!canA);
+    const ce=c.querySelector('.bcost'); if(ce)ce.textContent=fmt(cost)+' 🌑';
+    const ne=c.querySelector('.bcnt');  if(ne)ne.textContent=G.b[b.id];
   });
 }
 
-function renderBuildings() {
-  const container = document.getElementById('blist');
-  container.innerHTML = '';
-  BD.forEach(b => {
-    const cost = bldCost(b);
-    const can = G.mana >= cost;
-    const prod = bldProdBase(b);
-    const div = document.createElement('div');
-    div.className = 'bcard ' + (can ? 'can' : 'no');
-    div.id = 'bc-'+b.id;
-    div.innerHTML = `
-      <div class="bicon">${b.icon}</div>
+function renderBlds(){
+  const list=document.getElementById('blist'); list.innerHTML='';
+  const tp=totalProd();
+  BD.forEach(b=>{
+    const cost=bCost(b), can=G.m>=cost;
+    const prod=bProd(b), cnt2=G.b[b.id];
+    const bTotal=prod*cnt2, pct=tp>0?((bTotal/tp)*100).toFixed(1):0;
+    const mls=[10,25,50,100,200,500], nxt=mls.find(m=>cnt2<m);
+    const msInfo=nxt?`${nxt-cnt2} sonra bonus`:'✅ Tüm bonuslar';
+    const div=document.createElement('div');
+    div.className='bcard '+(can?'can':'no'); div.dataset.t=b.t; div.id='bc-'+b.id;
+    div.innerHTML=`<div class="bicon">${b.ic}</div>
       <div>
-        <div class="bname">${b.name}</div>
-        <div class="bdesc">${b.desc}</div>
-        <div class="bprod">+${fmt(prod)}/sn · "${b.flavor}"</div>
+        <div class="bname">${b.n}</div>
+        <div class="bdesc">${b.d}</div>
+        <div class="bprod">+${fmt(prod)}/sn · toplam ${fmt(bTotal)}/sn (${pct}%)</div>
+        <div class="bms">🎯 ${msInfo}</div>
       </div>
-      <div class="bright">
+      <div style="text-align:right">
         <div class="bcost">${fmt(cost)} 🌑</div>
-        <div class="bcnt">${G.b[b.id]}</div>
+        <div class="bcnt">${cnt2}</div>
       </div>`;
-    div.addEventListener('click', () => buyBld(b.id));
-    container.appendChild(div);
+    div.addEventListener('click',()=>buyBld(b.id));
+    div.addEventListener('mouseenter',e=>showTip(`<strong>${b.n}</strong>${b.fl}<br><br>Üretim: ${fmt(prod)}/sn/adet<br>Bu tip toplam: ${fmt(bTotal)}/sn`,e));
+    div.addEventListener('mousemove',moveTip);
+    div.addEventListener('mouseleave',hideTip);
+    list.appendChild(div);
   });
 }
 
-function renderUpgrades() {
-  const el = document.getElementById('t-upgrades');
-  el.innerHTML = '';
-
-  const avail   = UD.filter(u => !G.u[u.id] && u.show(G));
-  const locked   = UD.filter(u => !G.u[u.id] && !u.show(G));
-  const bought   = UD.filter(u =>  G.u[u.id]);
-
-  if (avail.length) {
-    label(el, 'Mevcut Yükseltmeler');
-    avail.forEach(u => {
-      const afford = G.mana >= u.cost;
-      const d = document.createElement('div');
-      d.className = 'ucard' + (afford ? '' : ' unafford');
-      d.innerHTML = `<div class="uicon">${u.icon}</div>
-        <div><div class="uname">${u.name}</div>
-        <div class="udesc">${u.desc}</div>
-        <div class="ucost">${fmt(u.cost)} 🌑</div></div>`;
-      d.addEventListener('click', () => buyUpg(u.id));
+function renderUpg(){
+  const el=document.getElementById('t-upgrades'); el.innerHTML='';
+  const av=UD.filter(u=>!G.u[u.id]&&u.sh(G));
+  const lk=UD.filter(u=>!G.u[u.id]&&!u.sh(G));
+  const bt=UD.filter(u=>G.u[u.id]);
+  if(av.length){ slbl(el,`Mevcut (${av.length})`); av.forEach(u=>mkU(el,u,false)); }
+  if(lk.length){ slbl(el,`Kilitli (${lk.length})`);
+    lk.slice(0,4).forEach(()=>{
+      const d=document.createElement('div'); d.className='ucard ul';
+      d.innerHTML='<div class="ui">🔒</div><div><div class="un">???</div><div class="ud">Koşul sağlanmadı</div></div>';
       el.appendChild(d);
     });
   }
-
-  if (locked.length) {
-    label(el, `Kilitli (${locked.length})`);
-    locked.slice(0, 4).forEach(() => {
-      const d = document.createElement('div');
-      d.className = 'ucard ulocked';
-      d.innerHTML = `<div class="uicon">🔒</div><div><div class="uname">???</div><div class="udesc">Koşullar sağlanmadı</div></div>`;
-      el.appendChild(d);
-    });
-  }
-
-  if (bought.length) {
-    label(el, 'Satın Alınanlar');
-    bought.forEach(u => {
-      const d = document.createElement('div');
-      d.className = 'ucard ubought';
-      d.innerHTML = `<div class="uicon">${u.icon}</div><div><div class="uname">${u.name}</div><div class="udesc">${u.desc}</div></div>`;
-      el.appendChild(d);
-    });
-  }
+  if(bt.length){ slbl(el,`Satın Alınan (${bt.length})`); bt.forEach(u=>mkU(el,u,true)); }
 }
 
-function renderAchievements() {
-  const el = document.getElementById('t-achievements');
-  el.innerHTML = '';
-  ACD.forEach(a => {
-    const on = !!G.ach[a.id];
-    const d = document.createElement('div');
-    d.className = 'acard ' + (on ? 'aon' : 'aoff');
-    d.innerHTML = `<div class="aicon">${on ? a.icon : '🔒'}</div>
-      <div><div class="aname">${on ? a.name : '???'}</div>
-      <div class="adesc">${on ? a.desc : 'Henüz açılmadı'}</div></div>`;
+function mkU(parent,u,bought){
+  const aff=G.m>=u.c;
+  const d=document.createElement('div');
+  d.className='ucard'+(bought?' ub':aff?'':' ua');
+  d.innerHTML=`<div class="ui">${u.ic}</div>
+    <div><div class="un">${u.n}</div><div class="ud">${u.d}</div>
+    <div class="uc">${bought?'<span style="color:var(--acc2)">✅ Aktif</span>':fmt(u.c)+' 🌑'}</div></div>`;
+  if(!bought) d.addEventListener('click',()=>buyUpg(u.id));
+  parent.appendChild(d);
+}
+
+function renderDCS(){
+  const el=document.getElementById('t-shop'); el.innerHTML='';
+  const info=document.createElement('div');
+  info.style.cssText='font-size:.72rem;color:var(--dim);margin-bottom:10px;padding:8px;background:rgba(0,0,0,.2);border-radius:6px;border:1px solid rgba(245,158,11,.15);line-height:1.6;';
+  info.innerHTML=`💎 Rüya Kristalleri yükselişlerden kazanılır ve <b>sıfırlanmaz</b>.<br>Mevcut: <b style="color:var(--gold)">${G.dc} 💎</b>`;
+  el.appendChild(info);
+  DCS.forEach(item=>{
+    const bought=G.dcs[item.id], can=G.dc>=item.c;
+    const d=document.createElement('div');
+    d.className='dccard'+(bought?' dcb':!can?' dcn':'');
+    d.innerHTML=`<div class="ui">${item.ic}</div>
+      <div><div class="dn">${item.n}</div><div class="dd">${item.d}</div>
+      <div class="dc">${bought?'✅ Alındı':item.c+' 💎'}</div></div>`;
+    if(!bought) d.addEventListener('click',()=>buyDCS(item.id));
     el.appendChild(d);
   });
 }
 
-function checkAch() {
-  let changed = false;
-  ACD.forEach(a => {
-    if (!G.ach[a.id] && a.cond(G)) {
-      G.ach[a.id] = true;
-      showNotif(`🏆 Başarım: ${a.name} — ${a.desc}`);
-      log(`🏆 Başarım açıldı: ${a.name}`);
-      changed = true;
-    }
+function renderAch(){
+  const el=document.getElementById('t-ach');
+  const done=ACD.filter(a=>G.ach[a.id]).length;
+  el.innerHTML=`<div style="text-align:center;font-size:.8rem;padding:6px;margin-bottom:8px;color:var(--gold);">🏆 ${done}/${ACD.length}</div>`;
+  ACD.forEach(a=>{
+    const on=!!G.ach[a.id];
+    const d=document.createElement('div');
+    d.className='acard '+(on?'aon':'aoff');
+    d.innerHTML=`<div class="ai">${on?a.ic:'🔒'}</div>
+      <div><div class="an">${on?a.n:'???'}</div><div class="ades">${on?a.d:'Henüz açılmadı'}</div></div>`;
+    el.appendChild(d);
   });
-  if (changed) renderAchievements();
 }
 
-// ═══════════════════════════════════════════
-// UI HELPERS
-// ═══════════════════════════════════════════
-
-function setText(id, v) { const el=document.getElementById(id); if(el) el.textContent=v; }
-function label(parent, txt) {
-  const d = document.createElement('div');
-  d.className = 'section-label'; d.textContent = txt;
-  parent.appendChild(d);
+function renderStats(){
+  const el=document.getElementById('t-stats');
+  const prod=totalProd();
+  el.innerHTML='';
+  function sec(title){ const d=document.createElement('div'); d.className='sth'; d.textContent=title; el.appendChild(d); }
+  function row(l,r){ const d=document.createElement('div'); d.className='stline'; d.innerHTML=`<span>${l}</span><span>${r}</span>`; el.appendChild(d); }
+  sec('⚡ Üretim'); row('Saniyede',fmt(prod)); row('Dakikada',fmt(prod*60)); row('Saatte',fmt(prod*3600));
+  sec('🌑 Delilik'); row('Mevcut',fmt(G.m)); row('Tüm Zamanlarda',fmt(G.T));
+  sec('🏛️ Binalar');
+  BD.forEach(b=>row(b.ic+' '+b.n, G.b[b.id]));
+  sec('🔢 Sayaçlar'); row('Tıklamalar',fmt(G.tc)); row('Yükselişler',G.asc); row('DC (toplam)',G.tdcTotal);
+  sec('✨ Çarpanlar'); row('Yükseliş ×',G.ascM.toFixed(2)); row('DC Üretim',`+${(G.dcprod*100).toFixed(0)}%`); row('DC Tıklama',`+${(G.dcp*100).toFixed(0)}%`);
 }
 
-function log(msg) {
-  const area = document.getElementById('t-log');
-  const d = document.createElement('div');
-  d.className = 'log-e';
-  const t = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  d.textContent = `[${t}] ${msg}`;
-  area.insertBefore(d, area.firstChild);
-  while (area.children.length > 60) area.removeChild(area.lastChild);
+function renderAll(){
+  renderBlds(); renderUpg(); renderDCS(); renderAch(); renderMS(); renderStats(); refreshFast();
 }
 
-function floatText(txt, x, y) {
-  const el = document.createElement('div');
-  el.className = 'ftext';
-  el.textContent = txt;
-  el.style.left = x + 'px';
-  el.style.top  = y + 'px';
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 900);
+// ── UI HELPERS ────────────────────────────────────────────
+function slbl(p,t){const d=document.createElement('div');d.className='slbl';d.textContent=t;p.appendChild(d);}
+
+function log(msg,isEv=false){
+  const area=document.getElementById('t-log');
+  const d=document.createElement('div'); d.className='loge'+(isEv?' ev':'');
+  const t=new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  d.textContent=`[${t}] ${msg}`;
+  area.insertBefore(d,area.firstChild);
+  while(area.children.length>80) area.removeChild(area.lastChild);
 }
 
-let notifTimer;
-function showNotif(msg) {
-  const el = document.getElementById('notif');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(notifTimer);
-  notifTimer = setTimeout(() => el.classList.remove('show'), 3500);
+function floatTxt(txt,x,y){
+  const el=document.createElement('div'); el.className='ftext';
+  el.textContent=txt; el.style.left=x+'px'; el.style.top=(y-10)+'px';
+  document.body.appendChild(el); setTimeout(()=>el.remove(),850);
 }
 
-// Tabs
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+let ntimer;
+function notif(msg){
+  const el=document.getElementById('notif'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(ntimer); ntimer=setTimeout(()=>el.classList.remove('show'),4000);
+}
+
+const tipEl=document.getElementById('tip');
+function showTip(html,e){tipEl.innerHTML=html;tipEl.classList.add('show');moveTip(e);}
+function moveTip(e){tipEl.style.left=(e.clientX+14)+'px';tipEl.style.top=(e.clientY-10)+'px';}
+function hideTip(){tipEl.classList.remove('show');}
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
     tab.classList.add('on');
-    ['upgrades','achievements','log'].forEach(name => {
-      document.getElementById('t-'+name).style.display = (tab.dataset.tab===name) ? 'block' : 'none';
+    ['upgrades','shop','ach','stats','log'].forEach(n=>{
+      document.getElementById('t-'+n).style.display=tab.dataset.tab===n?'block':'none';
     });
-    if (tab.dataset.tab === 'achievements') renderAchievements();
+    if(tab.dataset.tab==='ach') renderAch();
+    if(tab.dataset.tab==='stats') renderStats();
+    if(tab.dataset.tab==='shop') renderDCS();
   });
 });
 
-// Void button
-document.getElementById('void-btn').addEventListener('click', doClick);
-document.getElementById('prestige-btn').addEventListener('click', doPrestige);
+document.getElementById('tinner').textContent=[...TMSGS,...TMSGS].join('');
 
-// ═══════════════════════════════════════════
-// SAVE / LOAD
-// ═══════════════════════════════════════════
-
-const SAVE_KEY = 'ee_save_v1';
-
-function save() {
-  G.lastSave = Date.now();
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)); } catch(e) {}
+// ── SAVE / LOAD ───────────────────────────────────────────
+const SK='ee_v3';
+function save(){
+  G.lastSave=Date.now();
+  try{localStorage.setItem(SK,JSON.stringify(G));}catch(e){}
 }
-
-function load() {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return;
-    const d = JSON.parse(raw);
-    const fields = ['mana','totalMana','ascensions','ascMult','dreamCrystals','clicks','b','u','ach'];
-    fields.forEach(k => { if (d[k] !== undefined) G[k] = d[k]; });
-    // ensure all buildings exist
-    BD.forEach(b => { if (G.b[b.id]===undefined) G.b[b.id]=0; });
-
-    // Offline gains (max 8 hours)
-    if (d.lastSave) {
-      const elapsed = Math.min((Date.now() - d.lastSave) / 1000, 28800);
-      if (elapsed > 5) {
-        const prod = totalProd();
-        const gained = prod * elapsed;
-        if (gained > 0) {
-          G.mana += gained;
-          G.totalMana += gained;
-          const mins = Math.floor(elapsed/60);
-          showNotif(`💤 Çevrimdışı: +${fmt(gained)} delilik (${mins} dakika)`);
-          log(`💤 Çevrimdışı üretim: +${fmt(gained)} (${mins} dk)`);
-        }
+function load(){
+  try{
+    const raw=localStorage.getItem(SK); if(!raw)return;
+    const d=JSON.parse(raw);
+    ['m','T','asc','ascM','ascBns','dc','tdcTotal','tc','b','u','ms','dcs','ach','dcp','dcprod'].forEach(k=>{if(d[k]!==undefined)G[k]=d[k];});
+    BD.forEach(b=>{if(G.b[b.id]===undefined)G.b[b.id]=0;});
+    recalcDC();
+    if(d.lastSave){
+      const el=Math.min((Date.now()-d.lastSave)/1000,43200);
+      if(el>5){
+        const gained=totalProd()*el;
+        if(gained>0){G.m+=gained;G.T+=gained;notif(`💤 Çevrimdışı: +${fmt(gained)} (${fmtT(el)})`);log(`💤 Çevrimdışı: +${fmt(gained)} (${fmtT(el)})`);}
       }
     }
-    log('💾 Oyun yüklendi.');
-  } catch(e) {
-    console.warn('Load error:', e);
-  }
+    log('💾 Kayıt yüklendi.');
+  }catch(e){console.warn(e);}
 }
 
-// ═══════════════════════════════════════════
-// GAME LOOP
-// ═══════════════════════════════════════════
-
-let lastTick = Date.now();
-
-function tick() {
-  const now = Date.now();
-  const dt = Math.min((now - lastTick) / 1000, 1);
-  lastTick = now;
-
-  const gained = totalProd() * dt;
-  G.mana += gained;
-  G.totalMana += gained;
-
-  refreshHeader();
-  refreshLeft();
-  refreshBuildingAfford();
-  checkAch();
+// ── GAME LOOP ─────────────────────────────────────────────
+let lastT=Date.now();
+function tick(){
+  const now=Date.now(), dt=Math.min((now-lastT)/1000,1); lastT=now;
+  const g=totalProd()*dt; G.m+=g; G.T+=g;
+  checkMS(); checkAch(); checkEv(); refreshFast();
 }
 
-function refreshAll() {
-  renderBuildings();
-  renderUpgrades();
-  renderAchievements();
-  refreshHeader();
-  refreshLeft();
-}
+document.getElementById('void-btn').addEventListener('click',doClick);
+document.getElementById('pbtn').addEventListener('click',doPrestige);
 
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
+load(); renderAll();
+log('🌑 Eldritch Empire başladı. Boşluğa fısılda...');
 
-load();
-refreshAll();
-log('🌑 Eldritch Empire başladı. Boşluğa fısılda ve karanlık güce ulaş...');
-
-setInterval(tick, 50);
-setInterval(save, 8000);
-setInterval(renderUpgrades, 3000);   // refresh available upgrades
+setInterval(tick,50);
+setInterval(save,8000);
+setInterval(()=>{
+  renderUpg();
+  const at=document.querySelector('.tab.on')?.dataset?.tab;
+  if(at==='shop') renderDCS();
+  if(at==='stats') renderStats();
+},3000);
 </script>
 </body>
 </html>
