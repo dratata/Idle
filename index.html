@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eldritch Empire — Karanlığın Uyanışı</title>
+<style>
+:root {
+  --bg: #04040f;
+  --panel: #0b0b1e;
+  --panel2: #0e0e24;
+  --border: #1e1040;
+  --accent: #7c3aed;
+  --accent2: #10b981;
+  --gold: #f59e0b;
+  --text: #c4b5fd;
+  --dim: #6b5fa0;
+  --glow: rgba(124,58,237,0.35);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  display: grid;
+  grid-template-rows: 48px 1fr;
+  height: 100vh;
+}
+
+/* ── HEADER ── */
+#header {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  flex-shrink: 0;
+}
+#game-title {
+  font-size: 1.15rem;
+  letter-spacing: 3px;
+  color: #a78bfa;
+  text-shadow: 0 0 18px var(--glow);
+  white-space: nowrap;
+}
+#header-stats {
+  display: flex;
+  gap: 22px;
+  font-size: 0.78rem;
+  color: var(--dim);
+}
+#header-stats b { color: var(--text); }
+#save-info { font-size:0.68rem; color: #3b3060; }
+
+/* ── MAIN GRID ── */
+#main {
+  display: grid;
+  grid-template-columns: 260px 1fr 290px;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* ── LEFT PANEL ── */
+#left {
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 14px;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+#click-zone { display:flex; flex-direction:column; align-items:center; gap:12px; }
+
+#void-btn {
+  width: 150px; height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #1a0a3a 0%, #050510 65%);
+  border: 2px solid #4c1d95;
+  cursor: pointer;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 3.8rem;
+  transition: transform 0.08s, box-shadow 0.15s;
+  box-shadow: 0 0 28px var(--glow), 0 0 60px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.6);
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#void-btn::before {
+  content:'';
+  position:absolute; inset:-4px;
+  border-radius:50%;
+  border: 1px solid rgba(124,58,237,0.3);
+  animation: ring 3s linear infinite;
+}
+#void-btn::after {
+  content:'';
+  position:absolute; inset:-12px;
+  border-radius:50%;
+  border: 1px solid rgba(124,58,237,0.12);
+  animation: ring 4s linear infinite reverse;
+}
+@keyframes ring { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+#void-btn:hover { box-shadow: 0 0 45px var(--glow), 0 0 80px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.6); }
+#void-btn:active { transform: scale(0.93); }
+
+#mana-val { font-size:1.7rem; color:#a78bfa; font-weight:bold; text-align:center; }
+#mana-rate { font-size:0.78rem; color:var(--dim); text-align:center; }
+#click-hint { font-size:0.68rem; color:#3b3060; text-align:center; }
+
+.stat-box {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 10px 12px;
+  font-size:0.8rem;
+}
+.stat-box h3 { color:var(--accent); font-size:0.68rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:7px; }
+.stat-row { display:flex; justify-content:space-between; padding:2px 0; }
+.stat-row span:last-child { color:#a78bfa; }
+
+#prestige-box { margin-top:auto; }
+#prestige-hint { font-size:0.7rem; color:var(--dim); text-align:center; margin-bottom:6px; line-height:1.4; }
+#prestige-btn {
+  width:100%; padding:9px 6px;
+  background: linear-gradient(135deg,#120826,#2d1b69);
+  border: 1px solid #6d28d9;
+  border-radius:7px;
+  color:#a78bfa; cursor:pointer;
+  font-family:inherit; font-size:0.85rem;
+  transition: all 0.2s;
+  line-height:1.5;
+}
+#prestige-btn:hover:not(:disabled) { background:linear-gradient(135deg,#2d1b69,#4c1d95); box-shadow:0 0 14px rgba(109,40,217,0.45); }
+#prestige-btn:disabled { opacity:0.35; cursor:not-allowed; }
+
+/* ── MID PANEL ── */
+#mid {
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+#mid-title {
+  font-size:0.72rem; text-transform:uppercase; letter-spacing:2px;
+  color:var(--accent); padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+
+.bcard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap:10px; align-items:center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.bcard::after {
+  content:''; position:absolute; bottom:0; left:0;
+  height:2px; width:0; background:var(--accent);
+  transition: width 0.3s;
+}
+.bcard.can::after { width:100%; }
+.bcard:hover:not(.no) { border-color:var(--accent); background:rgba(124,58,237,0.08); }
+.bcard.can { border-color:rgba(124,58,237,0.4); }
+.bcard.no { opacity:0.45; cursor:not-allowed; }
+
+.bicon { font-size:1.9rem; text-align:center; }
+.bname { font-size:0.92rem; color:#d4bfff; }
+.bdesc { font-size:0.7rem; color:var(--dim); margin-top:2px; }
+.bprod { font-size:0.68rem; color:#6d28d9; margin-top:3px; }
+.bright { text-align:right; }
+.bcost { font-size:0.82rem; color:#a78bfa; }
+.bcnt { font-size:1.45rem; color:var(--accent2); font-weight:bold; }
+
+/* ── RIGHT PANEL ── */
+#right {
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction:column;
+  overflow: hidden;
+}
+.tabs { display:flex; border-bottom:1px solid var(--border); }
+.tab {
+  flex:1; padding:10px 4px; text-align:center;
+  font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;
+  color:var(--dim); cursor:pointer; transition:all 0.15s;
+  border-bottom:2px solid transparent;
+}
+.tab:hover { color:var(--text); }
+.tab.on { color:var(--accent); border-bottom-color:var(--accent); background:rgba(124,58,237,0.07); }
+
+#tab-body { overflow-y:auto; flex:1; padding:10px; }
+
+.section-label {
+  font-size:0.65rem; text-transform:uppercase; letter-spacing:1px;
+  color:#3b3060; margin:10px 0 5px;
+}
+
+/* Upgrades */
+.ucard {
+  background:rgba(0,0,0,0.2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:8px 10px;
+  margin-bottom:5px;
+  cursor:pointer;
+  display:grid; grid-template-columns:28px 1fr;
+  gap:8px; align-items:center;
+  transition: all 0.15s;
+  font-size:0.78rem;
+}
+.ucard:hover:not(.ulocked):not(.ubought) { border-color:var(--accent); background:rgba(124,58,237,0.1); }
+.ucard.ulocked { opacity:0.25; cursor:not-allowed; }
+.ucard.ubought { opacity:0.45; border-color:var(--accent2); cursor:default; }
+.ucard.unafford { opacity:0.6; }
+.uicon { font-size:1.2rem; text-align:center; }
+.uname { color:#d4bfff; font-size:0.8rem; }
+.udesc { color:var(--dim); font-size:0.68rem; }
+.ucost { color:#a78bfa; font-size:0.7rem; margin-top:2px; }
+
+/* Achievements */
+.acard {
+  background:rgba(0,0,0,0.2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:8px 10px;
+  margin-bottom:5px;
+  display:grid; grid-template-columns:26px 1fr;
+  gap:8px; align-items:center;
+  font-size:0.78rem;
+  transition:border-color 0.3s;
+}
+.acard.aon { border-color:var(--gold); }
+.acard.aoff { opacity:0.25; }
+.aicon { font-size:1.1rem; text-align:center; }
+.aname { color:#d4bfff; font-size:0.78rem; }
+.adesc { color:var(--dim); font-size:0.68rem; }
+
+/* Log */
+.log-e {
+  font-size:0.73rem; padding:4px 8px;
+  background:rgba(0,0,0,0.15);
+  border-left:2px solid var(--accent);
+  border-radius:0 4px 4px 0;
+  margin-bottom:3px;
+  animation:fadeIn 0.25s;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:none} }
+
+/* Float text */
+.ftext {
+  position:fixed; pointer-events:none;
+  font-size:1.1rem; font-weight:bold;
+  color:#a78bfa;
+  animation: fup 0.9s ease-out forwards;
+  z-index:9999;
+}
+@keyframes fup { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-70px)} }
+
+/* Notification */
+#notif {
+  position:fixed; top:55px; left:50%; transform:translateX(-50%);
+  background:linear-gradient(135deg,#12082a,#2d1b69);
+  border:1px solid var(--accent);
+  border-radius:8px; padding:10px 18px;
+  font-size:0.85rem; z-index:9000;
+  opacity:0; transition:opacity 0.3s;
+  pointer-events:none; text-align:center;
+  max-width:380px; line-height:1.4;
+}
+#notif.show { opacity:1; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:var(--accent); }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div id="game-title">⚫ ELDRITCH EMPIRE</div>
+  <div id="header-stats">
+    <span>Toplam: <b id="h-total">0</b> 🌑</span>
+    <span>Üretim: <b id="h-prod">0</b>/sn</span>
+    <span>Yükseliş: <b id="h-asc">0</b> (<b id="h-mult">1.0</b>x)</span>
+  </div>
+  <div id="save-info">💾 Otomatik kayıt aktif</div>
+</div>
+
+<div id="main">
+
+  <!-- LEFT -->
+  <div id="left">
+    <div id="click-zone">
+      <div id="void-btn">🌑</div>
+      <div id="mana-val">0 🌑</div>
+      <div id="mana-rate">+0/sn</div>
+      <div id="click-hint">Boşluğa fısılda...</div>
+    </div>
+
+    <div class="stat-box">
+      <h3>📊 Durum</h3>
+      <div class="stat-row"><span>Tıklama Gücü</span><span id="s-click">1</span></div>
+      <div class="stat-row"><span>Kültistler</span><span id="s-cult">0</span></div>
+      <div class="stat-row"><span>Rüya Kristali</span><span id="s-dc">0</span></div>
+      <div class="stat-row"><span>Yükseltmeler</span><span id="s-upg">0</span></div>
+    </div>
+
+    <div id="prestige-box">
+      <div id="prestige-hint">1 Trilyon delilik toplayarak Yükseliş yapabilirsiniz</div>
+      <button id="prestige-btn" disabled>
+        🌀 YÜKSELİŞ YAP<br>
+        <small id="prestige-sub" style="font-size:0.72rem;color:#6d28d9;"></small>
+      </button>
+    </div>
+  </div>
+
+  <!-- MID -->
+  <div id="mid">
+    <div id="mid-title">🏛️ Yapılar — Tıklayarak satın al</div>
+    <div id="blist"></div>
+  </div>
+
+  <!-- RIGHT -->
+  <div id="right">
+    <div class="tabs">
+      <div class="tab on" data-tab="upgrades">Yükseltme</div>
+      <div class="tab" data-tab="achievements">Başarım</div>
+      <div class="tab" data-tab="log">Günlük</div>
+    </div>
+    <div id="tab-body">
+      <div id="t-upgrades"></div>
+      <div id="t-achievements" style="display:none"></div>
+      <div id="t-log" style="display:none"></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="notif"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+
+const BD = [
+  { id:'c',  name:'Kültist',          icon:'🧎', desc:'Karanlıkta dua eden adanmış bir takipçi', baseCost:15,           baseProd:0.1,    flavor:'Her dua bir fısıltı parçasıdır.' },
+  { id:'r',  name:'Ritüel Çemberi',   icon:'⭕', desc:'Güçle titreşen taşa kazınmış semboller',  baseCost:100,          baseProd:0.5,    flavor:'Kan akar, geçit açılır.' },
+  { id:'l',  name:'Yasak Kütüphane',  icon:'📚', desc:'Söylenemez bilgilerin tomları',            baseCost:1100,         baseProd:5,      flavor:'Her sayfa bir delilik fragmenti.' },
+  { id:'s',  name:'Karanlık Mabet',   icon:'🏛️', desc:'Kutsal olmayan bir ibadet yeri',           baseCost:12000,        baseProd:22,     flavor:'Tanrılar burada eğilir.' },
+  { id:'a',  name:'Akıl Hastanesi',   icon:'🏚️', desc:'Deliler gerçeğe en yakın olanlardır',     baseCost:130000,       baseProd:110,    flavor:'Çığlıklar ilahiye dönüşür.' },
+  { id:'m',  name:'Karanlık Manastır',icon:'⛪', desc:'Kutsal olmayan eylemler için kutsal yer', baseCost:1400000,      baseProd:450,    flavor:'Rahipler gerçeği fısıldar.' },
+  { id:'n',  name:'Boşluk Kavşağı',   icon:'🌀', desc:'Gerçeklikte bir yırtık',                   baseCost:20000000,     baseProd:2200,   flavor:'Boyutlar birbiriyle konuşur.' },
+  { id:'k',  name:'Batık Şehir',      icon:'🌊', desc:"Ph'nglui mglw'nafh...",                    baseCost:330000000,    baseProd:11000,  flavor:'Derin sular düşünür.' },
+  { id:'g',  name:'Yaşlı Dev',        icon:'🗿', desc:'Yürüyen bir tanrı',                        baseCost:5100000000,   baseProd:55000,  flavor:'Adımları yer sarsıntısı yaratır.' },
+  { id:'d',  name:'Boyut Ezici',      icon:'🕳️', desc:'Gerçekliğin kendisi eğilir',              baseCost:75000000000,  baseProd:220000, flavor:'Varoluş senin iradenle büküldü.' },
+];
+
+const UD = [
+  // Click
+  { id:'u_c1', name:'Derin Fısıltı',    icon:'👁️',  desc:'Tıklama x2',    cost:100,        type:'click',    mult:2,   show:(st)=>st.totalMana>=30 },
+  { id:'u_c2', name:'Kabus Sesi',       icon:'👁️‍🗨️', desc:'Tıklama x2',    cost:1000,       type:'click',    mult:2,   show:(st)=>st.totalMana>=400 },
+  { id:'u_c3', name:'Tanrısal Çığlık',  icon:'😱',  desc:'Tıklama x5',    cost:100000,     type:'click',    mult:5,   show:(st)=>st.totalMana>=40000 },
+  { id:'u_c4', name:'Gerçeklik Çatlağı',icon:'💥',  desc:'Tıklama x10',   cost:10000000,   type:'click',    mult:10,  show:(st)=>st.totalMana>=2000000 },
+  // Cultist
+  { id:'u_c_1',name:'Derin İnanç',      icon:'🧎',  desc:'Kültist x2',    cost:200,        type:'bld', tgt:'c', mult:2, show:(st)=>cnt('c')>=1 },
+  { id:'u_c_2',name:'Fanatizm',         icon:'🧎',  desc:'Kültist x3',    cost:5000,       type:'bld', tgt:'c', mult:3, show:(st)=>cnt('c')>=5 },
+  { id:'u_c_3',name:'Kutsal Çılgınlık', icon:'🧎',  desc:'Kültist x4',    cost:200000,     type:'bld', tgt:'c', mult:4, show:(st)=>cnt('c')>=25 },
+  // Ritual Circle
+  { id:'u_r_1',name:'Kan Yazısı',       icon:'⭕',  desc:'Çember x2',     cost:1000,       type:'bld', tgt:'r', mult:2, show:(st)=>cnt('r')>=1 },
+  { id:'u_r_2',name:'Şeytan Geometrisi',icon:'⭕',  desc:'Çember x3',     cost:25000,      type:'bld', tgt:'r', mult:3, show:(st)=>cnt('r')>=5 },
+  // Library
+  { id:'u_l_1',name:'Necronomicon',     icon:'📚',  desc:'Kütüphane x2',  cost:15000,      type:'bld', tgt:'l', mult:2, show:(st)=>cnt('l')>=1 },
+  { id:'u_l_2',name:'Sonsuz Arşiv',     icon:'📚',  desc:'Kütüphane x3',  cost:400000,     type:'bld', tgt:'l', mult:3, show:(st)=>cnt('l')>=10 },
+  // Shrine
+  { id:'u_s_1',name:'Kara Yıldız',      icon:'🏛️',  desc:'Mabet x2',      cost:150000,     type:'bld', tgt:'s', mult:2, show:(st)=>cnt('s')>=1 },
+  { id:'u_s_2',name:'Cehenneme Sütunu', icon:'🏛️',  desc:'Mabet x3',      cost:4000000,    type:'bld', tgt:'s', mult:3, show:(st)=>cnt('s')>=10 },
+  // Asylum
+  { id:'u_a_1',name:'Toplu Histeri',    icon:'🏚️',  desc:'Hastane x2',    cost:1500000,    type:'bld', tgt:'a', mult:2, show:(st)=>cnt('a')>=1 },
+  { id:'u_a_2',name:'Kolektif Delilik', icon:'🏚️',  desc:'Hastane x3',    cost:40000000,   type:'bld', tgt:'a', mult:3, show:(st)=>cnt('a')>=10 },
+  // Monastery
+  { id:'u_m_1',name:'Karanlık Litürji', icon:'⛪',  desc:'Manastır x2',   cost:15000000,   type:'bld', tgt:'m', mult:2, show:(st)=>cnt('m')>=1 },
+  // Global
+  { id:'u_g1', name:'Delilik Dalgası',  icon:'🌊',  desc:'Tüm üretim x1.5',cost:1000000,  type:'global',   mult:1.5, show:(st)=>st.totalMana>=400000 },
+  { id:'u_g2', name:'Karanlık Aydınlanma',icon:'🌑',desc:'Tüm üretim x2', cost:100000000, type:'global',   mult:2,   show:(st)=>st.totalMana>=30000000 },
+  { id:'u_g3', name:'Yaratıcı Kaos',    icon:'🕳️',  desc:'Tüm üretim x5', cost:10000000000,type:'global',  mult:5,   show:(st)=>st.totalMana>=2000000000 },
+];
+
+const ACD = [
+  { id:'a1',  name:'İlk Adım',          icon:'👣', desc:'1 delilik topla',            cond:(st)=>st.totalMana>=1 },
+  { id:'a2',  name:'Yüz Ruhlu',         icon:'💯', desc:'100 delilik topla',           cond:(st)=>st.totalMana>=100 },
+  { id:'a3',  name:'Bin Kabus',          icon:'😈', desc:'1,000 delilik topla',         cond:(st)=>st.totalMana>=1000 },
+  { id:'a4',  name:'Karanlık Yol',       icon:'🌑', desc:'10,000 delilik topla',        cond:(st)=>st.totalMana>=10000 },
+  { id:'a5',  name:'Uçurum Gözler',      icon:'👁️', desc:'100,000 delilik topla',       cond:(st)=>st.totalMana>=100000 },
+  { id:'a6',  name:'Milyon Çılgın',      icon:'🤯', desc:'1 milyon delilik topla',      cond:(st)=>st.totalMana>=1000000 },
+  { id:'a7',  name:'Milyar Ruh',         icon:'💫', desc:'1 milyar delilik topla',      cond:(st)=>st.totalMana>=1e9 },
+  { id:'a8',  name:'Tanrısal Delilik',   icon:'🌌', desc:'1 trilyon delilik topla',     cond:(st)=>st.totalMana>=1e12 },
+  { id:'a9',  name:'Küçük Tarikat',      icon:'🧎', desc:'10 Kültist satın al',         cond:(st)=>cnt('c')>=10 },
+  { id:'a10', name:'Büyük Tarikat',      icon:'🧎', desc:'50 Kültist satın al',         cond:(st)=>cnt('c')>=50 },
+  { id:'a11', name:'Okuyucu',            icon:'📚', desc:'10 Kütüphane satın al',       cond:(st)=>cnt('l')>=10 },
+  { id:'a12', name:'Kara İmparatorluk', icon:'👑', desc:'Her binayı en az 1 al',       cond:(st)=>BD.every(b=>cnt(b.id)>=1) },
+  { id:'a13', name:'Yükseliş I',         icon:'🌀', desc:'İlk Yükseli yap',             cond:(st)=>st.ascensions>=1 },
+  { id:'a14', name:'Sonsuz Döngü',       icon:'♾️', desc:'5 Yükseliş yap',             cond:(st)=>st.ascensions>=5 },
+  { id:'a15', name:'Tıklama Delisi',     icon:'👆', desc:'1000 kez tıkla',             cond:(st)=>st.clicks>=1000 },
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+
+let G = {
+  mana: 0,
+  totalMana: 0,
+  ascensions: 0,
+  ascMult: 1,
+  dreamCrystals: 0,
+  clicks: 0,
+  b: {},   // building counts
+  u: {},   // bought upgrades
+  ach: {}, // unlocked achievements
+  lastSave: Date.now(),
+};
+
+BD.forEach(b => G.b[b.id] = 0);
+
+function cnt(id) { return G.b[id] || 0; }
+
+// ═══════════════════════════════════════════
+// CALCULATIONS
+// ═══════════════════════════════════════════
+
+function bldCost(b) {
+  return Math.floor(b.baseCost * Math.pow(1.15, G.b[b.id]));
+}
+
+function bldProdBase(b) {
+  let p = b.baseProd;
+  UD.filter(u => u.type==='bld' && u.tgt===b.id && G.u[u.id]).forEach(u => p *= u.mult);
+  UD.filter(u => u.type==='global' && G.u[u.id]).forEach(u => p *= u.mult);
+  return p;
+}
+
+function totalProd() {
+  let t = 0;
+  BD.forEach(b => t += bldProdBase(b) * G.b[b.id]);
+  return t * G.ascMult;
+}
+
+function clickPow() {
+  let p = 1;
+  UD.filter(u => u.type==='click' && G.u[u.id]).forEach(u => p *= u.mult);
+  return p * G.ascMult;
+}
+
+function upgCount() {
+  return Object.values(G.u).filter(Boolean).length;
+}
+
+// ═══════════════════════════════════════════
+// NUMBER FORMAT
+// ═══════════════════════════════════════════
+
+function fmt(n) {
+  if (n < 1e3)  return Math.floor(n).toString();
+  if (n < 1e6)  return (n/1e3).toFixed(2)  + 'k';
+  if (n < 1e9)  return (n/1e6).toFixed(2)  + 'M';
+  if (n < 1e12) return (n/1e9).toFixed(2)  + 'B';
+  if (n < 1e15) return (n/1e12).toFixed(2) + 'T';
+  if (n < 1e18) return (n/1e15).toFixed(2) + 'Qa';
+  return            (n/1e18).toFixed(2) + 'Qi';
+}
+
+// ═══════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════
+
+function doClick(e) {
+  const p = clickPow();
+  G.mana += p;
+  G.totalMana += p;
+  G.clicks++;
+  floatText(`+${fmt(p)}`, e.clientX, e.clientY);
+  checkAch();
+  refreshHeader();
+  refreshLeft();
+  refreshBuildingAfford();
+}
+
+function buyBld(id) {
+  const b = BD.find(x=>x.id===id);
+  const cost = bldCost(b);
+  if (G.mana < cost) return;
+  G.mana -= cost;
+  G.b[id]++;
+  log(`🏛️ ${b.name} satın alındı! (${G.b[id]}. adet)`);
+  checkAch();
+  refreshHeader();
+  refreshLeft();
+  renderBuildings();
+  renderUpgrades();
+}
+
+function buyUpg(id) {
+  const u = UD.find(x=>x.id===id);
+  if (!u || G.u[id] || G.mana < u.cost) return;
+  G.mana -= u.cost;
+  G.u[id] = true;
+  log(`✨ Yükseltme açıldı: ${u.name}`);
+  checkAch();
+  refreshHeader();
+  refreshLeft();
+  renderUpgrades();
+  renderBuildings();
+}
+
+function doPrestige() {
+  if (G.totalMana < 1e12) return;
+  const bonus = Math.max(1, Math.floor(Math.log10(G.totalMana / 1e12) + 1));
+  G.ascensions++;
+  G.ascMult = 1 + G.ascensions * 0.5;
+  G.dreamCrystals += bonus;
+  G.mana = 0; G.totalMana = 0;
+  BD.forEach(b => G.b[b.id] = 0);
+  G.u = {};
+  showNotif(`🌀 ${G.ascensions}. Yükseliş! +${bonus} Rüya Kristali • Çarpan: x${G.ascMult.toFixed(1)}`);
+  log(`🌀 Yükseliş yapıldı! Çarpan artık x${G.ascMult.toFixed(1)}`);
+  checkAch();
+  refreshAll();
+}
+
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+
+function refreshHeader() {
+  const prod = totalProd();
+  setText('h-total', fmt(G.totalMana));
+  setText('h-prod',  fmt(prod));
+  setText('h-asc',   G.ascensions);
+  setText('h-mult',  G.ascMult.toFixed(1));
+}
+
+function refreshLeft() {
+  const prod = totalProd();
+  setText('mana-val',  fmt(G.mana) + ' 🌑');
+  setText('mana-rate', `+${fmt(prod)}/sn`);
+  setText('s-click',   fmt(clickPow()));
+  setText('s-cult',    cnt('c'));
+  setText('s-dc',      G.dreamCrystals);
+  setText('s-upg',     upgCount());
+
+  // Prestige
+  const can = G.totalMana >= 1e12;
+  document.getElementById('prestige-btn').disabled = !can;
+  if (can) {
+    const b = Math.max(1, Math.floor(Math.log10(G.totalMana / 1e12) + 1));
+    setText('prestige-hint', '✅ Yükseliş yapabilirsiniz!');
+    setText('prestige-sub',  `+${b} Rüya Kristali kazanırsınız`);
+  } else {
+    setText('prestige-hint', `1T delilik gerekli (${fmt(G.totalMana)} / ${fmt(1e12)})`);
+    setText('prestige-sub',  '');
+  }
+}
+
+function refreshBuildingAfford() {
+  BD.forEach(b => {
+    const el = document.getElementById('bc-'+b.id);
+    if (!el) return;
+    const cost = bldCost(b);
+    el.classList.toggle('can', G.mana >= cost);
+    el.classList.toggle('no',  G.mana < cost);
+    const costEl = el.querySelector('.bcost');
+    if (costEl) costEl.textContent = fmt(cost) + ' 🌑';
+    const cntEl = el.querySelector('.bcnt');
+    if (cntEl) cntEl.textContent = G.b[b.id];
+  });
+}
+
+function renderBuildings() {
+  const container = document.getElementById('blist');
+  container.innerHTML = '';
+  BD.forEach(b => {
+    const cost = bldCost(b);
+    const can = G.mana >= cost;
+    const prod = bldProdBase(b);
+    const div = document.createElement('div');
+    div.className = 'bcard ' + (can ? 'can' : 'no');
+    div.id = 'bc-'+b.id;
+    div.innerHTML = `
+      <div class="bicon">${b.icon}</div>
+      <div>
+        <div class="bname">${b.name}</div>
+        <div class="bdesc">${b.desc}</div>
+        <div class="bprod">+${fmt(prod)}/sn · "${b.flavor}"</div>
+      </div>
+      <div class="bright">
+        <div class="bcost">${fmt(cost)} 🌑</div>
+        <div class="bcnt">${G.b[b.id]}</div>
+      </div>`;
+    div.addEventListener('click', () => buyBld(b.id));
+    container.appendChild(div);
+  });
+}
+
+function renderUpgrades() {
+  const el = document.getElementById('t-upgrades');
+  el.innerHTML = '';
+
+  const avail   = UD.filter(u => !G.u[u.id] && u.show(G));
+  const locked   = UD.filter(u => !G.u[u.id] && !u.show(G));
+  const bought   = UD.filter(u =>  G.u[u.id]);
+
+  if (avail.length) {
+    label(el, 'Mevcut Yükseltmeler');
+    avail.forEach(u => {
+      const afford = G.mana >= u.cost;
+      const d = document.createElement('div');
+      d.className = 'ucard' + (afford ? '' : ' unafford');
+      d.innerHTML = `<div class="uicon">${u.icon}</div>
+        <div><div class="uname">${u.name}</div>
+        <div class="udesc">${u.desc}</div>
+        <div class="ucost">${fmt(u.cost)} 🌑</div></div>`;
+      d.addEventListener('click', () => buyUpg(u.id));
+      el.appendChild(d);
+    });
+  }
+
+  if (locked.length) {
+    label(el, `Kilitli (${locked.length})`);
+    locked.slice(0, 4).forEach(() => {
+      const d = document.createElement('div');
+      d.className = 'ucard ulocked';
+      d.innerHTML = `<div class="uicon">🔒</div><div><div class="uname">???</div><div class="udesc">Koşullar sağlanmadı</div></div>`;
+      el.appendChild(d);
+    });
+  }
+
+  if (bought.length) {
+    label(el, 'Satın Alınanlar');
+    bought.forEach(u => {
+      const d = document.createElement('div');
+      d.className = 'ucard ubought';
+      d.innerHTML = `<div class="uicon">${u.icon}</div><div><div class="uname">${u.name}</div><div class="udesc">${u.desc}</div></div>`;
+      el.appendChild(d);
+    });
+  }
+}
+
+function renderAchievements() {
+  const el = document.getElementById('t-achievements');
+  el.innerHTML = '';
+  ACD.forEach(a => {
+    const on = !!G.ach[a.id];
+    const d = document.createElement('div');
+    d.className = 'acard ' + (on ? 'aon' : 'aoff');
+    d.innerHTML = `<div class="aicon">${on ? a.icon : '🔒'}</div>
+      <div><div class="aname">${on ? a.name : '???'}</div>
+      <div class="adesc">${on ? a.desc : 'Henüz açılmadı'}</div></div>`;
+    el.appendChild(d);
+  });
+}
+
+function checkAch() {
+  let changed = false;
+  ACD.forEach(a => {
+    if (!G.ach[a.id] && a.cond(G)) {
+      G.ach[a.id] = true;
+      showNotif(`🏆 Başarım: ${a.name} — ${a.desc}`);
+      log(`🏆 Başarım açıldı: ${a.name}`);
+      changed = true;
+    }
+  });
+  if (changed) renderAchievements();
+}
+
+// ═══════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════
+
+function setText(id, v) { const el=document.getElementById(id); if(el) el.textContent=v; }
+function label(parent, txt) {
+  const d = document.createElement('div');
+  d.className = 'section-label'; d.textContent = txt;
+  parent.appendChild(d);
+}
+
+function log(msg) {
+  const area = document.getElementById('t-log');
+  const d = document.createElement('div');
+  d.className = 'log-e';
+  const t = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  d.textContent = `[${t}] ${msg}`;
+  area.insertBefore(d, area.firstChild);
+  while (area.children.length > 60) area.removeChild(area.lastChild);
+}
+
+function floatText(txt, x, y) {
+  const el = document.createElement('div');
+  el.className = 'ftext';
+  el.textContent = txt;
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+let notifTimer;
+function showNotif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    tab.classList.add('on');
+    ['upgrades','achievements','log'].forEach(name => {
+      document.getElementById('t-'+name).style.display = (tab.dataset.tab===name) ? 'block' : 'none';
+    });
+    if (tab.dataset.tab === 'achievements') renderAchievements();
+  });
+});
+
+// Void button
+document.getElementById('void-btn').addEventListener('click', doClick);
+document.getElementById('prestige-btn').addEventListener('click', doPrestige);
+
+// ═══════════════════════════════════════════
+// SAVE / LOAD
+// ═══════════════════════════════════════════
+
+const SAVE_KEY = 'ee_save_v1';
+
+function save() {
+  G.lastSave = Date.now();
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)); } catch(e) {}
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    const fields = ['mana','totalMana','ascensions','ascMult','dreamCrystals','clicks','b','u','ach'];
+    fields.forEach(k => { if (d[k] !== undefined) G[k] = d[k]; });
+    // ensure all buildings exist
+    BD.forEach(b => { if (G.b[b.id]===undefined) G.b[b.id]=0; });
+
+    // Offline gains (max 8 hours)
+    if (d.lastSave) {
+      const elapsed = Math.min((Date.now() - d.lastSave) / 1000, 28800);
+      if (elapsed > 5) {
+        const prod = totalProd();
+        const gained = prod * elapsed;
+        if (gained > 0) {
+          G.mana += gained;
+          G.totalMana += gained;
+          const mins = Math.floor(elapsed/60);
+          showNotif(`💤 Çevrimdışı: +${fmt(gained)} delilik (${mins} dakika)`);
+          log(`💤 Çevrimdışı üretim: +${fmt(gained)} (${mins} dk)`);
+        }
+      }
+    }
+    log('💾 Oyun yüklendi.');
+  } catch(e) {
+    console.warn('Load error:', e);
+  }
+}
+
+// ═══════════════════════════════════════════
+// GAME LOOP
+// ═══════════════════════════════════════════
+
+let lastTick = Date.now();
+
+function tick() {
+  const now = Date.now();
+  const dt = Math.min((now - lastTick) / 1000, 1);
+  lastTick = now;
+
+  const gained = totalProd() * dt;
+  G.mana += gained;
+  G.totalMana += gained;
+
+  refreshHeader();
+  refreshLeft();
+  refreshBuildingAfford();
+  checkAch();
+}
+
+function refreshAll() {
+  renderBuildings();
+  renderUpgrades();
+  renderAchievements();
+  refreshHeader();
+  refreshLeft();
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+
+load();
+refreshAll();
+log('🌑 Eldritch Empire başladı. Boşluğa fısılda ve karanlık güce ulaş...');
+
+setInterval(tick, 50);
+setInterval(save, 8000);
+setInterval(renderUpgrades, 3000);   // refresh available upgrades
+</script>
+</body>
+</html>
